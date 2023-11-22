@@ -2,6 +2,7 @@ package floor
 
 import (
 	"io/ioutil"
+	"math/rand"
 	"strconv"
 
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
@@ -19,7 +20,19 @@ func (f *Floor) Init() {
 	case fromFileFloor:
 		f.fullContent = readFloorFromFile(configuration.Global.FloorFile)
 	case quadTreeFloor:
-		f.quadtreeContent = quadtree.MakeFromArray(readFloorFromFile(configuration.Global.FloorFile))
+		if configuration.Global.RandomGeneration {
+			var RandomFloor [][]int
+			for i := 0; i < configuration.Global.RandomTileY; i++ {
+				RandomFloor = append(RandomFloor, []int{})
+				for x := 0; x < configuration.Global.RandomTileX; x++ {
+					var random int = rand.Intn(5)
+					RandomFloor[i] = append(RandomFloor[i], random)
+				}
+			}
+			f.quadtreeContent = quadtree.MakeFromArray(RandomFloor)
+		} else {
+			f.quadtreeContent = quadtree.MakeFromArray(readFloorFromFile(configuration.Global.FloorFile))
+		}
 	}
 }
 
