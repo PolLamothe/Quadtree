@@ -9,6 +9,7 @@ import (
 	_ "image/png"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 //go:embed floor.png
@@ -20,6 +21,7 @@ var floorBytes []byte
 // Dans la version du projet qui vous est fournie, ces éléments sont des
 // carrés de 16 pixels de côté. Vous pourrez changer cela si vous le voulez.
 var FloorImage *ebiten.Image
+var portalIMG *ebiten.Image
 
 //go:embed character.png
 var characterBytes []byte
@@ -37,6 +39,10 @@ var CharacterImage *ebiten.Image
 // Ces structures de données sont stockées dans les variables définies ci-dessus.
 func Load() {
 	decoded, _, err := image.Decode(bytes.NewReader(floorBytes))
+	if err != nil {
+		log.Fatal(err)
+	}
+	portalIMG, _, err = ebitenutil.NewImageFromFile("../assets/portail.png")
 	if err != nil {
 		log.Fatal(err)
 	}
