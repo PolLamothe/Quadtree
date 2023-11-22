@@ -11,5 +11,6 @@
     "FloorFile": "../floor-files/validation",
     "RandomGeneration":true,
     "RandomTileX" : 15,
-    "RandomTileY" : 15
+    "RandomTileY" : 15,
+    "SingleUsagePortal" : false
 }

@@ -47,6 +47,7 @@ type Configuration struct {
 	RandomGeneration              bool
 	RandomTileX                   int
 	RandomTileY                   int
+	SingleUsagePortal             bool
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`

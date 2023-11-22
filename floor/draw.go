@@ -5,6 +5,7 @@ import (
 
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/assets"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -15,7 +16,7 @@ func (f Floor) Draw(screen *ebiten.Image) {
 
 	for y := range f.content {
 		for x := range f.content[y] {
-			if f.content[y][x] != -1 {
+			if f.content[y][x] >= 0 && f.content[y][x] <= 5 {
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(float64(x*configuration.Global.TileSize), float64(y*configuration.Global.TileSize))
 
@@ -24,6 +25,9 @@ func (f Floor) Draw(screen *ebiten.Image) {
 				screen.DrawImage(assets.FloorImage.SubImage(
 					image.Rect(shiftX, 0, shiftX+configuration.Global.TileSize, configuration.Global.TileSize),
 				).(*ebiten.Image), op)
+				if portal.IsPortalHere(f.X-len(f.content[0])/2+x, f.Y-len(f.content)/2+y) {
+					screen.DrawImage(assets.PortalIMG, op)
+				}
 			}
 		}
 	}

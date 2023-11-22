@@ -1,9 +1,9 @@
 package character
 
 import (
-	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
-
 	"github.com/hajimehoshi/ebiten/v2"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
 )
 
 // Update met à jour la position du personnage, son orientation
@@ -36,6 +36,11 @@ func (c *Character) Update(blocking [4]bool) {
 				c.yInc = 1
 				c.moving = true
 			}
+		} else if ebiten.IsKeyPressed(ebiten.KeyTab) && !portal.IsPortalHere(c.X, c.Y) {
+			if len(portal.PortalStore) == 2 {
+				portal.PortalStore = portal.PortalStore[1:]
+			}
+			portal.PortalStore = append(portal.PortalStore, []int{c.X, c.Y})
 		}
 	} else {
 		c.animationFrameCount++
@@ -51,6 +56,15 @@ func (c *Character) Update(blocking [4]bool) {
 				c.Y += c.yInc
 				c.xInc = 0
 				c.yInc = 0
+				if portal.IsPortalHere(c.X, c.Y) && len(portal.PortalStore) == 2 {
+					var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
+					c.X = newCoord[0]
+					c.Y = newCoord[1]
+					if configuration.Global.SingleUsagePortal {
+						portal.PortalStore = [][]int{}
+					}
+					c.Update(blocking)
+				}
 			}
 		}
 	}

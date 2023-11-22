@@ -12,6 +12,8 @@ import (
 // On aurait pu se passer de cette fonction et tout faire dans Draw.
 // Mais cela permet de découpler le calcul de l'affichage.
 func (f *Floor) Update(camXPos, camYPos int) {
+	f.X = camXPos
+	f.Y = camYPos
 	switch configuration.Global.FloorKind {
 	case gridFloor:
 		f.updateGridFloor(camXPos, camYPos)

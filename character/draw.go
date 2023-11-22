@@ -46,5 +46,4 @@ func (c Character) Draw(screen *ebiten.Image, camX, camY int) {
 	screen.DrawImage(assets.CharacterImage.SubImage(
 		image.Rect(shiftX, shiftY, shiftX+configuration.Global.TileSize, shiftY+configuration.Global.TileSize),
 	).(*ebiten.Image), op)
-
 }

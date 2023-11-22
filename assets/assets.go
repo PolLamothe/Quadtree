@@ -21,7 +21,7 @@ var floorBytes []byte
 // Dans la version du projet qui vous est fournie, ces éléments sont des
 // carrés de 16 pixels de côté. Vous pourrez changer cela si vous le voulez.
 var FloorImage *ebiten.Image
-var portalIMG *ebiten.Image
+var PortalIMG *ebiten.Image
 
 //go:embed character.png
 var characterBytes []byte
@@ -42,7 +42,7 @@ func Load() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	portalIMG, _, err = ebitenutil.NewImageFromFile("../assets/portail.png")
+	PortalIMG, _, err = ebitenutil.NewImageFromFile("../assets/portal.png")
 	if err != nil {
 		log.Fatal(err)
 	}
