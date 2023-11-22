@@ -1,0 +1,12 @@
+{
+    "DebugMode": false,
+    "NumTileX": 8,
+    "NumTileY": 8,
+    "TileSize": 16,
+    "NumCharacterAnimImages": 4,
+    "NumFramePerCharacterAnimImage": 5,
+    "NumTileForDebug": 6,
+    "CameraMode": 1,
+    "FloorKind": 2,
+    "FloorFile": "../floor-files/validation"
+}
