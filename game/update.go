@@ -18,7 +18,7 @@ func (g *Game) Update() error {
 	}
 
 	g.character.Update(g.floor.Blocking(g.character.X, g.character.Y, g.camera.X, g.camera.Y))
-	g.camera.Update(g.character.X, g.character.Y)
+	g.camera.Update(g.character.X, g.character.Y, g.floor, g.floor.QuadtreeContent)
 	g.floor.Update(g.camera.X, g.camera.Y)
 
 	return nil

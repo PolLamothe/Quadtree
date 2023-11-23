@@ -11,14 +11,14 @@ import (
 
 // Init initialise les structures de données internes de f.
 func (f *Floor) Init() {
-	f.content = make([][]int, configuration.Global.NumTileY)
-	for y := 0; y < len(f.content); y++ {
-		f.content[y] = make([]int, configuration.Global.NumTileX)
+	f.Content = make([][]int, configuration.Global.NumTileY)
+	for y := 0; y < len(f.Content); y++ {
+		f.Content[y] = make([]int, configuration.Global.NumTileX)
 	}
 
 	switch configuration.Global.FloorKind {
 	case fromFileFloor:
-		f.fullContent = readFloorFromFile(configuration.Global.FloorFile)
+		f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
 	case quadTreeFloor:
 		if configuration.Global.RandomGeneration {
 			var RandomFloor [][]int
@@ -29,9 +29,9 @@ func (f *Floor) Init() {
 					RandomFloor[i] = append(RandomFloor[i], random)
 				}
 			}
-			f.quadtreeContent = quadtree.MakeFromArray(RandomFloor)
+			f.QuadtreeContent = quadtree.MakeFromArray(RandomFloor)
 		} else {
-			f.quadtreeContent = quadtree.MakeFromArray(readFloorFromFile(configuration.Global.FloorFile))
+			f.QuadtreeContent = quadtree.MakeFromArray(readFloorFromFile(configuration.Global.FloorFile))
 		}
 	}
 }

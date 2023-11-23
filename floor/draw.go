@@ -14,18 +14,18 @@ import (
 // la partie du sol qui est visible (qui doit avoir été calculée avec Get avant).
 func (f Floor) Draw(screen *ebiten.Image) {
 
-	for y := range f.content {
-		for x := range f.content[y] {
-			if f.content[y][x] >= 0 && f.content[y][x] <= 5 {
+	for y := range f.Content {
+		for x := range f.Content[y] {
+			if f.Content[y][x] >= 0 && f.Content[y][x] <= 5 {
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(float64(x*configuration.Global.TileSize), float64(y*configuration.Global.TileSize))
 
-				shiftX := f.content[y][x] * configuration.Global.TileSize
+				shiftX := f.Content[y][x] * configuration.Global.TileSize
 
 				screen.DrawImage(assets.FloorImage.SubImage(
 					image.Rect(shiftX, 0, shiftX+configuration.Global.TileSize, configuration.Global.TileSize),
 				).(*ebiten.Image), op)
-				if portal.IsPortalHere(f.X-len(f.content[0])/2+x, f.Y-len(f.content)/2+y) {
+				if portal.IsPortalHere(f.X-len(f.Content[0])/2+x, f.Y-len(f.Content)/2+y) {
 					screen.DrawImage(assets.PortalIMG, op)
 				}
 			}

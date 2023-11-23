@@ -1,16 +1,20 @@
 package camera
 
-import "gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+import "C"
+import (
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/quadtree"
+)
 
 // Update met à jour la position de la caméra à chaque pas
 // de temps, c'est-à-dire tous les 1/60 secondes.
-func (c *Camera) Update(characterPosX, characterPosY int) {
-
+func (c *Camera) Update(characterPosX, characterPosY int, f floor.Floor, q quadtree.Quadtree) {
 	switch configuration.Global.CameraMode {
 	case Static:
 		c.updateStatic()
 	case FollowCharacter:
-		c.updateFollowCharacter(characterPosX, characterPosY)
+		c.updateFollowCharacter(characterPosX, characterPosY, f, q)
 	}
 }
 
@@ -23,7 +27,30 @@ func (c *Camera) updateStatic() {}
 // suit toujours le personnage. Elle prend en paramètres deux
 // entiers qui indiquent les coordonnées du personnage et place
 // la caméra au même endroit.
-func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int) {
-	c.X = characterPosX
-	c.Y = characterPosY
+func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f floor.Floor, q quadtree.Quadtree) {
+	var MapWidth int
+	var MapHeight int = len(f.FullContent)
+	if MapHeight == 0 {
+		MapHeight = q.Height
+		MapWidth = q.Width
+	} else {
+		MapWidth = len(f.FullContent[0])
+	}
+	if configuration.Global.CameraBlockEdge && c.AllBlockDisplayed {
+		if characterPosX-configuration.Global.NumTileX/2 >= 0 && characterPosX+configuration.Global.NumTileX/2 < MapWidth {
+			c.X = characterPosX
+		}
+		if characterPosY-configuration.Global.NumTileY/2 >= 0 && characterPosY+configuration.Global.NumTileY/2 < MapHeight {
+			c.Y = characterPosY
+		}
+	} else {
+		if (characterPosX-configuration.Global.NumTileX/2 >= 0) && (characterPosY-configuration.Global.NumTileY/2 >= 0) && !c.AllBlockDisplayed && (len(f.Content) > 0) {
+			if characterPosX+configuration.Global.NumTileX/2 < MapWidth && characterPosY+configuration.Global.NumTileY/2 < MapHeight {
+				c.AllBlockDisplayed = true
+			}
+		}
+		c.X = characterPosX
+		c.Y = characterPosY
+	}
+
 }

@@ -2,11 +2,11 @@ package quadtree
 
 // Quadtree est la structure de données pour les arbres
 // quaternaires. Les champs non exportés sont :
-//   - width, height : la taille en cases de la zone représentée
+//   - Width, Height : la taille en cases de la zone représentée
 //     par l'arbre.
 //   - root : le nœud qui est la racine de l'arbre.
 type Quadtree struct {
-	width, height int
+	Width, Height int
 	root          *node
 }
 

@@ -49,7 +49,7 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current n
 func (q Quadtree) GetContent(topLeftX, topLeftY int, contentHolder [][]int) {
 	for i := 0; i < len(contentHolder); i++ {
 		for x := 0; x < len(contentHolder[i]); x++ {
-			contentHolder[i][x] = q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.height, q.width, *q.root)
+			contentHolder[i][x] = q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.Height, q.Width, *q.root)
 		}
 	}
 }

@@ -45,9 +45,11 @@ type Configuration struct {
 	FloorKind                     int
 	FloorFile                     string
 	RandomGeneration              bool
+	Portal                        bool
 	RandomTileX                   int
 	RandomTileY                   int
 	SingleUsagePortal             bool
+	CameraBlockEdge               bool
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`

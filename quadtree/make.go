@@ -88,7 +88,7 @@ func recur(position string, flootContent [][]int, parent node) node {
 
 func MakeFromArray(floorContent [][]int) (q Quadtree) {
 	var Quad Quadtree = Quadtree{
-		width: len(floorContent[0]), height: len(floorContent)}
+		Width: len(floorContent[0]), Height: len(floorContent)}
 	var Laroot node = recur("root", floorContent, node{})
 	Quad.root = &Laroot
 	return Quad

@@ -36,7 +36,7 @@ func (c *Character) Update(blocking [4]bool) {
 				c.yInc = 1
 				c.moving = true
 			}
-		} else if ebiten.IsKeyPressed(ebiten.KeyTab) && !portal.IsPortalHere(c.X, c.Y) {
+		} else if ebiten.IsKeyPressed(ebiten.KeyTab) && !portal.IsPortalHere(c.X, c.Y) && configuration.Global.Portal {
 			if len(portal.PortalStore) == 2 {
 				portal.PortalStore = portal.PortalStore[1:]
 			}

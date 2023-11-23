@@ -26,8 +26,8 @@ func (f *Floor) Update(camXPos, camYPos int) {
 
 // le sol est un quadrillage de tuiles d'herbe et de tuiles de désert
 func (f *Floor) updateGridFloor(camXPos, camYPos int) {
-	for y := 0; y < len(f.content); y++ {
-		for x := 0; x < len(f.content[y]); x++ {
+	for y := 0; y < len(f.Content); y++ {
+		for x := 0; x < len(f.Content[y]); x++ {
 			absCamX := camXPos
 			if absCamX < 0 {
 				absCamX = -absCamX
@@ -36,7 +36,7 @@ func (f *Floor) updateGridFloor(camXPos, camYPos int) {
 			if absCamY < 0 {
 				absCamY = -absCamY
 			}
-			f.content[y][x] = ((x + absCamX%2) + (y + absCamY%2)) % 2
+			f.Content[y][x] = ((x + absCamX%2) + (y + absCamY%2)) % 2
 		}
 	}
 }
@@ -59,7 +59,7 @@ func decalRight2(array *[]int) {
 
 // le sol est récupéré depuis un tableau, qui a été lu dans un fichier
 func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
-	var Ytile [][]int = f.fullContent
+	var Ytile [][]int = f.FullContent
 	var Yfill []int
 	for i := 0; i < len(Ytile[0])+configuration.Global.NumTileX; i++ {
 		Yfill = append(Yfill, -1)
@@ -81,7 +81,7 @@ func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 	for i := 0; i < len(Xtile); i++ {
 		Xtile[i] = Xtile[i][configuration.Global.NumTileX/2+camXPos+1 : configuration.Global.NumTileX/2+camXPos+configuration.Global.NumTileX+1]
 	}
-	f.content = Xtile
+	f.Content = Xtile
 
 }
 
@@ -89,5 +89,5 @@ func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 func (f *Floor) updateQuadtreeFloor(camXPos, camYPos int) {
 	topLeftX := camXPos - configuration.Global.ScreenCenterTileX
 	topLeftY := camYPos - configuration.Global.ScreenCenterTileY
-	f.quadtreeContent.GetContent(topLeftX, topLeftY, f.content)
+	f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
 }
