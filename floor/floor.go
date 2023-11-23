@@ -16,7 +16,7 @@ type Floor struct {
 	Content           [][]int
 	FullContent       [][]int
 	QuadtreeContent   quadtree.Quadtree
-	AllBlockDisplayed bool
+	AllBlockDisplayed bool //variable utilisée pour le vérouillage de la camera au bord de la map
 	X, Y              int
 }
 

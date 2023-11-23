@@ -7,12 +7,14 @@ import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
 )
 
+var PortalSecur bool = false //variable qui sert a temporiser le mouvement a la sortie d'un portail pour empecher le personnage d'aller sur une case -1
+
 // Update met à jour la position du personnage, son orientation
 // et son étape d'animation (si nécessaire) à chaque pas
 // de temps, c'est-à-dire tous les 1/60 secondes.
 func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 
-	if !c.moving {
+	if !c.moving && !PortalSecur {
 		if ebiten.IsKeyPressed(ebiten.KeyRight) {
 			c.orientation = orientedRight
 			if !blocking[1] {
@@ -45,6 +47,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 		}
 	} else {
 		c.animationFrameCount++
+		PortalSecur = false
 		if c.animationFrameCount >= configuration.Global.NumFramePerCharacterAnimImage {
 			c.animationFrameCount = 0
 			shiftStep := configuration.Global.TileSize / configuration.Global.NumCharacterAnimImages
@@ -62,9 +65,11 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 					c.X = newCoord[0]
 					c.Y = newCoord[1]
 					f.AllBlockDisplayed = false
+					c.xInc, c.yInc = 0, 0
 					if configuration.Global.SingleUsagePortal {
 						portal.PortalStore = [][]int{}
 					}
+					PortalSecur = true
 					c.Update(blocking, f)
 				}
 			}
