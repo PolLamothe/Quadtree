@@ -8,9 +8,8 @@ import "gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
 // se trouve mais vous pourrez ajouter des choses
 // au besoin lors de votre développement.
 type Camera struct {
-	X, Y              int
-	f                 floor.Floor
-	AllBlockDisplayed bool //variable qui indique si le joueur n'est pas dans le coin de la map
+	X, Y int
+	f    floor.Floor
 }
 
 // types de caméra disponibles

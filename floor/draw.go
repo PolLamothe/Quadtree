@@ -13,7 +13,6 @@ import (
 // Draw affiche dans une image (en général, celle qui représente l'écran),
 // la partie du sol qui est visible (qui doit avoir été calculée avec Get avant).
 func (f Floor) Draw(screen *ebiten.Image) {
-
 	for y := range f.Content {
 		for x := range f.Content[y] {
 			if f.Content[y][x] >= 0 && f.Content[y][x] <= 5 {

@@ -13,10 +13,11 @@ import (
 //   - quadTreeContent : totalité du terrain sous forme de quadtree (utilisé
 //     avec le type d'affichage du terrain "quadtreeFloor")
 type Floor struct {
-	Content         [][]int
-	FullContent     [][]int
-	QuadtreeContent quadtree.Quadtree
-	X, Y            int
+	Content           [][]int
+	FullContent       [][]int
+	QuadtreeContent   quadtree.Quadtree
+	AllBlockDisplayed bool
+	X, Y              int
 }
 
 // types d'affichage du terrain disponibles

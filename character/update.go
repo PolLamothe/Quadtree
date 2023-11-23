@@ -3,13 +3,14 @@ package character
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
 )
 
 // Update met à jour la position du personnage, son orientation
 // et son étape d'animation (si nécessaire) à chaque pas
 // de temps, c'est-à-dire tous les 1/60 secondes.
-func (c *Character) Update(blocking [4]bool) {
+func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 
 	if !c.moving {
 		if ebiten.IsKeyPressed(ebiten.KeyRight) {
@@ -60,10 +61,11 @@ func (c *Character) Update(blocking [4]bool) {
 					var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
 					c.X = newCoord[0]
 					c.Y = newCoord[1]
+					f.AllBlockDisplayed = false
 					if configuration.Global.SingleUsagePortal {
 						portal.PortalStore = [][]int{}
 					}
-					c.Update(blocking)
+					c.Update(blocking, f)
 				}
 			}
 		}

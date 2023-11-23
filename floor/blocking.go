@@ -1,6 +1,8 @@
 package floor
 
-import "gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+import (
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+)
 
 // Blocking retourne, étant donnée la position du personnage,
 // un tableau de booléen indiquant si les cases au dessus (0),
@@ -10,7 +12,6 @@ func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blo
 
 	relativeXPos := characterXPos - camXPos + configuration.Global.ScreenCenterTileX
 	relativeYPos := characterYPos - camYPos + configuration.Global.ScreenCenterTileY
-
 	blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1
 	blocking[1] = relativeXPos >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
 	blocking[2] = relativeYPos >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
