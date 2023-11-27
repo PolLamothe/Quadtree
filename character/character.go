@@ -30,4 +30,5 @@ type Character struct {
 	moving              bool
 	shift               int
 	animationFrameCount int
+	XShift, YShift      int
 }

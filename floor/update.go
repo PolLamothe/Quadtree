@@ -77,9 +77,9 @@ func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 		}
 	}
 	var Xtile [][]int
-	Xtile = Ytile[configuration.Global.NumTileY/2+camYPos+1 : configuration.Global.NumTileY/2+camYPos+configuration.Global.NumTileY+1]
+	Xtile = Ytile[configuration.Global.NumTileY/2+camYPos : configuration.Global.NumTileY/2+camYPos+configuration.Global.NumTileY+1]
 	for i := 0; i < len(Xtile); i++ {
-		Xtile[i] = Xtile[i][configuration.Global.NumTileX/2+camXPos+1 : configuration.Global.NumTileX/2+camXPos+configuration.Global.NumTileX+1]
+		Xtile[i] = Xtile[i][configuration.Global.NumTileX/2+camXPos : configuration.Global.NumTileX/2+camXPos+configuration.Global.NumTileX+1]
 	}
 	f.Content = Xtile
 
