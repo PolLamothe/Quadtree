@@ -9,11 +9,11 @@
     "CameraMode": 1,
     "FloorKind": 2,
     "FloorFile": "../floor-files/validation",
-    "RandomGeneration":false,
-    "RandomTileX" : 15,
-    "RandomTileY" : 15,
+    "RandomGeneration":true,
+    "RandomTileX" : 14,
+    "RandomTileY" : 14,
     "Portal":true,
-    "SingleUsagePortal" : true,
+    "SingleUsagePortal" : false,
     "CameraBlockEdge" : true,
-    "CameraFluide" : true
+    "CameraFluide" : false
 }

@@ -15,40 +15,40 @@ import (
 // étape d'animation, etc) et de la position de la caméra (le personnage
 // est affiché relativement à la caméra).
 func (c *Character) Draw(screen *ebiten.Image, camX, camY, MapWidth, MapHeight int) {
-
 	xShift := 0
 	yShift := 0
-	var futurX, futureY int = 0, 0
 	var orientation string
 	switch c.orientation {
 	case orientedDown:
 		yShift = c.shift
-		futureY = -1
 		orientation = "Y"
 	case orientedUp:
 		yShift = -c.shift
-		futureY = 1
 		orientation = "Y"
 	case orientedLeft:
 		xShift = -c.shift
-		futurX = -1
 		orientation = "X"
 	case orientedRight:
 		xShift = c.shift
-		futurX = 1
 		orientation = "X"
 	}
-
 	xTileForDisplay := c.X - camX + configuration.Global.ScreenCenterTileX
 	yTileForDisplay := c.Y - camY + configuration.Global.ScreenCenterTileY
 	xPos := (xTileForDisplay)*configuration.Global.TileSize + xShift
 	yPos := (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
 	if configuration.Global.CameraFluide {
-		if false {
-			var camXAnt, camYAnt int = c.X + futurX, c.Y + futureY
-			c.X, c.Y = camXAnt, camYAnt
+		var futureX, futureY int = 0, 0
+		if xShift > 0 {
+			futureX = 1
+		} else if xShift < 0 {
+			futureX = -1
 		}
-		if configuration.Global.CameraBlockEdge && (((camX == configuration.Global.NumTileX/2 || camX == MapWidth-configuration.Global.NumTileX/2) && orientation == "X") || ((camY == configuration.Global.NumTileY/2 || camY == MapHeight-configuration.Global.NumTileY/2) && orientation == "Y")) { //condition a remplir pour que le personnage bouge visuellement
+		if yShift > 0 {
+			futureY = 1
+		} else if yShift < 0 {
+			futureY = -1
+		}
+		if configuration.Global.CameraBlockEdge && ((((camX == configuration.Global.NumTileX/2 && c.X+futureX <= camX) || (camX == MapWidth-configuration.Global.NumTileX/2 && c.X+futureX >= camX)) && orientation == "X") || (((camY == configuration.Global.NumTileY/2 && c.Y+futureY <= camY) || (camY == MapHeight-configuration.Global.NumTileY/2 && c.Y+futureY >= camY)) && orientation == "Y")) { //condition a remplir pour que le personnage bouge visuellement
 			xPos = (xTileForDisplay)*configuration.Global.TileSize + xShift
 			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
 		} else {
