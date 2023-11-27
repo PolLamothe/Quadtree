@@ -28,23 +28,18 @@ func (c *Camera) updateStatic() {}
 // entiers qui indiquent les coordonnées du personnage et place
 // la caméra au même endroit.
 func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floor.Floor, q quadtree.Quadtree) {
-	var MapWidth int
-	var MapHeight int = len(f.FullContent)
-	if MapHeight == 0 {
-		MapHeight = q.Height
-		MapWidth = q.Width
-	} else {
-		MapWidth = len(f.FullContent[0])
-	}
+	var MapWidth, MapHeight int
+	MapHeight = q.Height
+	MapWidth = q.Width
 	if configuration.Global.CameraBlockEdge && (*f).AllBlockDisplayed {
-		if characterPosX-configuration.Global.NumTileX/2 >= 0 && characterPosX+configuration.Global.NumTileX/2 < MapWidth {
+		if characterPosX-configuration.Global.NumTileX/2 >= 0 && characterPosX+configuration.Global.NumTileX/2 <= MapWidth {
 			c.X = characterPosX
 		}
-		if characterPosY-configuration.Global.NumTileY/2 >= 0 && characterPosY+configuration.Global.NumTileY/2 < MapHeight {
+		if characterPosY-configuration.Global.NumTileY/2 >= 0 && characterPosY+configuration.Global.NumTileY/2 <= MapHeight {
 			c.Y = characterPosY
 		}
 	} else {
-		if (characterPosX-configuration.Global.NumTileX/2 >= 0) && (characterPosY-configuration.Global.NumTileY/2 >= 0) && (len(f.Content) > 0) {
+		if (characterPosX-configuration.Global.NumTileX/2 >= 0) && (characterPosY-configuration.Global.NumTileY/2 >= 0) {
 			if characterPosX+configuration.Global.NumTileX/2 < MapWidth && characterPosY+configuration.Global.NumTileY/2 < MapHeight {
 				(*f).AllBlockDisplayed = true
 			}

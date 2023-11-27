@@ -19,7 +19,21 @@ func (f *Floor) Init() {
 
 	switch configuration.Global.FloorKind {
 	case fromFileFloor:
-		f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+		if configuration.Global.RandomGeneration {
+			var RandomFloor [][]int
+			for i := 0; i < configuration.Global.RandomTileY; i++ {
+				RandomFloor = append(RandomFloor, []int{})
+				for x := 0; x < configuration.Global.RandomTileX; x++ {
+					var random int = rand.Intn(5)
+					RandomFloor[i] = append(RandomFloor[i], random)
+				}
+			}
+			f.FullContent = RandomFloor
+			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent)
+		} else {
+			f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent)
+		}
 	case quadTreeFloor:
 		if configuration.Global.RandomGeneration {
 			var RandomFloor [][]int
