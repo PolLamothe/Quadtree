@@ -36,7 +36,19 @@ func recur(position string, flootContent [][]int, parent node) node {
 	} else if position == "bottomRight" {
 		laNode = node{topLeftX: parentTopx + parentWidthHalf/2, topLeftY: parentTopY + parentHeightHalf/2, content: -1, width: parentWidth / 2, height: parentHeight / 2}
 	}
-	if laNode.width == 1 && laNode.height == 1 {
+	var state bool = false
+	if !(laNode.width == 1 && laNode.height == 1) {
+		var origin int = flootContent[laNode.topLeftY][laNode.topLeftX]
+		state = true
+		for i := laNode.topLeftY; i < laNode.topLeftY+laNode.height; i++ {
+			for x := laNode.topLeftX; x < laNode.topLeftX+laNode.width; x++ {
+				if flootContent[i][x] != origin {
+					state = false
+				}
+			}
+		}
+	}
+	if (laNode.width == 1 && laNode.height == 1) || (state) {
 		laNode.content = flootContent[laNode.topLeftY][laNode.topLeftX]
 		laNode.topLeftNode = &laNode
 		laNode.topRightNode = &laNode
