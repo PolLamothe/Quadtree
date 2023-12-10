@@ -1,5 +1,7 @@
 package quadtree
 
+import "fmt"
+
 // MakeFromArray construit un quadtree représentant un terrain
 // étant donné un tableau représentant ce terrain.
 
@@ -37,11 +39,11 @@ func recur(position string, flootContent [][]int, parent node) node {
 		laNode = node{topLeftX: parentTopx + parentWidthHalf/2, topLeftY: parentTopY + parentHeightHalf/2, content: -1, width: parentWidth / 2, height: parentHeight / 2}
 	}
 	var state bool = false
-	var origin int = flootContent[parentTopY][parentTopx]
 	if !(laNode.width == 1 && laNode.height == 1) {
+		var origin int = flootContent[laNode.topLeftY][laNode.topLeftX]
 		state = true
-		for i := parentTopY; i < parent.topLeftY+laNode.height; i++ {
-			for x := parentTopx; x < parent.topLeftX+laNode.width; x++ {
+		for i := laNode.topLeftY; i < laNode.topLeftY+laNode.height; i++ {
+			for x := laNode.topLeftX; x < laNode.topLeftX+laNode.width; x++ {
 				if flootContent[i][x] != origin {
 					state = false
 				}
@@ -49,6 +51,9 @@ func recur(position string, flootContent [][]int, parent node) node {
 		}
 	}
 	if (laNode.width == 1 && laNode.height == 1) || (state) {
+		if state {
+			fmt.Println(laNode)
+		}
 		laNode.content = flootContent[laNode.topLeftY][laNode.topLeftX]
 		laNode.topLeftNode = &laNode
 		laNode.topRightNode = &laNode
