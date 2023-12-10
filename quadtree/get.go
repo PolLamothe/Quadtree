@@ -10,7 +10,7 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current n
 	if indexX < 0 || indexY < 0 || indexX > width || indexY > height {
 		return -1
 	}
-	if current.width == 1 && current.height == 1 {
+	if current.content != -1 {
 		return current.content
 	}
 	if (currentWidth)%2 != 0 {
