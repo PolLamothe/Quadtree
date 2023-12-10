@@ -36,7 +36,19 @@ func recur(position string, flootContent [][]int, parent node) node {
 	} else if position == "bottomRight" {
 		laNode = node{topLeftX: parentTopx + parentWidthHalf/2, topLeftY: parentTopY + parentHeightHalf/2, content: -1, width: parentWidth / 2, height: parentHeight / 2}
 	}
-	if laNode.width == 1 && laNode.height == 1 {
+	var state bool = false
+	var origin int = flootContent[parentTopY][parentTopx]
+	if !(laNode.width == 1 && laNode.height == 1) {
+		state = true
+		for i := parentTopY; i < parent.topLeftY+laNode.height; i++ {
+			for x := parentTopx; x < parent.topLeftX+laNode.width; x++ {
+				if flootContent[i][x] != origin {
+					state = false
+				}
+			}
+		}
+	}
+	if (laNode.width == 1 && laNode.height == 1) || (state) {
 		laNode.content = flootContent[laNode.topLeftY][laNode.topLeftX]
 		laNode.topLeftNode = &laNode
 		laNode.topRightNode = &laNode
@@ -89,7 +101,7 @@ func recur(position string, flootContent [][]int, parent node) node {
 func MakeFromArray(floorContent [][]int) (q Quadtree) {
 	var Quad Quadtree = Quadtree{
 		Width: len(floorContent[0]), Height: len(floorContent)}
-	var Laroot node = recur("root", floorContent, node{})
+	var Laroot node = recur("root", floorContent, node{width: len(floorContent[0]), height: len(floorContent), topLeftX: 0, topLeftY: 0})
 	Quad.root = &Laroot
 	return Quad
 }
