@@ -4,7 +4,7 @@ package game
 // faire attention à l'ordre des initialisation car elles
 // pourraient dépendre les unes des autres.
 func (g *Game) Init() {
-	g.character.Init()
+	g.Character.Init()
 	g.floor.Init()
 	g.camera.Init()
 }

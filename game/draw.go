@@ -1,5 +1,6 @@
 package game
 
+import "C"
 import (
 	"fmt"
 	"image/color"
@@ -16,9 +17,9 @@ import (
 // Il faut faire attention à l'ordre d'affichage pour éviter d'avoir
 // des éléments qui en cachent d'autres.
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.floor.Draw(screen)
-	g.character.Draw(screen, g.camera.X, g.camera.Y)
-
+	g.Character.RefreshShift()
+	g.floor.Draw(screen, int(float64(g.Character.XShift)*1.3), int(float64(g.Character.YShift)*1.3), g.camera.X, g.camera.Y, g.Character.X, g.Character.Y)
+	g.Character.Draw(screen, g.camera.X, g.camera.Y, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height)
 	if configuration.Global.DebugMode {
 		g.drawDebug(screen)
 	}
@@ -34,7 +35,6 @@ func (g Game) drawDebug(screen *ebiten.Image) {
 	gridLineSize := 2
 	cameraColor := color.NRGBA{R: 255, G: 0, B: 0, A: 255}
 	cameraLineSize := 1
-
 	mouseX, mouseY := ebiten.CursorPosition()
 
 	xMaxPos := configuration.Global.ScreenWidth
@@ -83,5 +83,5 @@ func (g Game) drawDebug(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, fmt.Sprint("(", g.camera.X, ",", g.camera.Y, ")"), xMaxPos+2*configuration.Global.TileSize+configuration.Global.TileSize/2, ySpace)
 
 	ebitenutil.DebugPrintAt(screen, "Character:", xMaxPos+2*configuration.Global.TileSize, 3*ySpace)
-	ebitenutil.DebugPrintAt(screen, fmt.Sprint("(", g.character.X, ",", g.character.Y, ")"), xMaxPos+2*configuration.Global.TileSize+configuration.Global.TileSize/2, 4*ySpace)
+	ebitenutil.DebugPrintAt(screen, fmt.Sprint("(", g.Character.X, ",", g.Character.Y, ")"), xMaxPos+2*configuration.Global.TileSize+configuration.Global.TileSize/2, 4*ySpace)
 }

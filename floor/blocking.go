@@ -1,7 +1,6 @@
 package floor
 
 import (
-	"fmt"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 )
 
@@ -10,13 +9,11 @@ import (
 // à droite (1), au dessous (2) et à gauche (3) du personnage
 // sont bloquantes.
 func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blocking [4]bool) {
-
 	relativeXPos := characterXPos - camXPos + configuration.Global.ScreenCenterTileX
 	relativeYPos := characterYPos - camYPos + configuration.Global.ScreenCenterTileY
 	blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1
 	blocking[1] = relativeXPos >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
 	blocking[2] = relativeYPos >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
 	blocking[3] = relativeXPos <= 0 || f.Content[relativeYPos][relativeXPos-1] == -1
-	fmt.Println(blocking)
 	return blocking
 }

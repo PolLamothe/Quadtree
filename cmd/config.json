@@ -1,18 +1,20 @@
 {
     "DebugMode": false,
-    "NumTileX": 5,
-    "NumTileY": 5,
+    "NumTileX": 6,
+    "NumTileY": 6,
     "TileSize": 16,
-    "NumCharacterAnimImages": 4,
+    "NumCharacterAnimImages": 5,
     "NumFramePerCharacterAnimImage": 5,
     "NumTileForDebug": 6,
     "CameraMode": 1,
     "FloorKind": 2,
-    "FloorFile": "../floor-files/validation",
-    "RandomGeneration":false,
-    "RandomTileX" : 15,
-    "RandomTileY" : 15,
+    "FloorFile": "../floor-files/beaupasbeau",
+    "RandomGeneration":true,
+    "RandomTileX" : 8,
+    "RandomTileY" : 8,
     "Portal":true,
     "SingleUsagePortal" : false,
-    "CameraBlockEdge" : true
+    "CameraBlockEdge" : false,
+    "CameraFluide" : true,
+    "GenerationInfinie" : true
 }

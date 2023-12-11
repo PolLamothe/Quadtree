@@ -50,6 +50,8 @@ type Configuration struct {
 	RandomTileY                   int
 	SingleUsagePortal             bool
 	CameraBlockEdge               bool
+	CameraFluide                  bool
+	GenerationInfinie             bool
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`

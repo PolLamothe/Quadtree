@@ -18,7 +18,8 @@ type Floor struct {
 	QuadtreeContent   quadtree.Quadtree
 	AllBlockDisplayed bool //variable utilisée pour le vérouillage de la camera au bord de la map
 	X, Y              int
-}
+	XChange, YChange  int
+} //variable utilisée pour modifier la position du joueur lors de la génération au fur et a mesure
 
 // types d'affichage du terrain disponibles
 const (
