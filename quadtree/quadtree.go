@@ -4,14 +4,14 @@ package quadtree
 // quaternaires. Les champs non exportés sont :
 //   - Width, Height : la taille en cases de la zone représentée
 //     par l'arbre.
-//   - root : le nœud qui est la racine de l'arbre.
+//   - Root : le nœud qui est la racine de l'arbre.
 type Quadtree struct {
 	Width, Height int
-	root          *node
+	Root          *node
 }
 
 // node représente un nœud d'arbre quaternaire. Les champs sont :
-//   - topLeftX, topLeftY : les coordonnées (en cases) de la case
+//   - TopLeftX, TopLeftY : les coordonnées (en cases) de la case
 //     située en haut à gauche de la zone du terrain représentée
 //     par ce nœud.
 //   - width, height :  la taille en cases de la zone représentée
@@ -22,7 +22,7 @@ type Quadtree struct {
 //     représentée par ce nœud, différent de nil si et seulement
 //     si le nœud actuel n'est pas une feuille.
 type node struct {
-	topLeftX, topLeftY int
+	TopLeftX, TopLeftY int
 	width, height      int
 	content            int
 	topLeftNode        *node

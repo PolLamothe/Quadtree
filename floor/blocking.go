@@ -9,7 +9,6 @@ import (
 // à droite (1), au dessous (2) et à gauche (3) du personnage
 // sont bloquantes.
 func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blocking [4]bool) {
-
 	relativeXPos := characterXPos - camXPos + configuration.Global.ScreenCenterTileX
 	relativeYPos := characterYPos - camYPos + configuration.Global.ScreenCenterTileY
 	blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1

@@ -13,6 +13,7 @@ import (
 func (f *Floor) Init() {
 	f.AllBlockDisplayed = false
 	f.Content = make([][]int, configuration.Global.NumTileY)
+	f.XChange, f.YChange = 0, 0
 	for y := 0; y < len(f.Content); y++ {
 		f.Content[y] = make([]int, configuration.Global.NumTileX)
 	}
@@ -29,13 +30,14 @@ func (f *Floor) Init() {
 				}
 			}
 			f.FullContent = RandomFloor
-			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent)
+			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 		} else {
 			f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
-			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent)
+			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 		}
 	case quadTreeFloor:
-		if configuration.Global.RandomGeneration {
+		f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+		if configuration.Global.RandomGeneration && !configuration.Global.GenerationInfinie {
 			var RandomFloor [][]int
 			for i := 0; i < configuration.Global.RandomTileY; i++ {
 				RandomFloor = append(RandomFloor, []int{})
@@ -44,9 +46,15 @@ func (f *Floor) Init() {
 					RandomFloor[i] = append(RandomFloor[i], random)
 				}
 			}
-			f.QuadtreeContent = quadtree.MakeFromArray(RandomFloor)
+			f.FullContent = RandomFloor
+			f.QuadtreeContent = quadtree.MakeFromArray(RandomFloor, len(RandomFloor[0]), len(RandomFloor), 0, 0)
 		} else {
-			f.QuadtreeContent = quadtree.MakeFromArray(readFloorFromFile(configuration.Global.FloorFile))
+			if configuration.Global.GenerationInfinie {
+				f.QuadtreeContent = quadtree.MakeFromArray([][]int{}, configuration.Global.NumTileX*4, configuration.Global.NumTileY*4, -configuration.Global.RandomTileX, -configuration.Global.RandomTileY)
+			} else {
+				f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+				f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
+			}
 		}
 	}
 }
@@ -60,18 +68,15 @@ func readFloorFromFile(fileName string) (floorContent [][]int) {
 	if err == nil {
 		var data2 string = string(data)
 		var result [][]int = [][]int{{}}
-		for i := 0; i < len(data2); i++ {
-			if string(data2[i]) != "\n" {
+		for i := 0; i < len(data2); i++ { //pour chaque caractère du fichier
+			if string(data2[i]) != "\n" { //si le caractere n'es pas une retour a la ligne
 				value, err := strconv.Atoi(string(data2[i]))
 				if err == nil {
-					result[len(result)-1] = append(result[len(result)-1], value)
+					result[len(result)-1] = append(result[len(result)-1], value) //on ajoute la valeur au tableau
 				}
 			} else {
-				result = append(result, []int{})
+				result = append(result, []int{}) //sinon on ajoute une ligne au tableau
 			}
-		}
-		for i := 0; i < configuration.Global.NumTileY/2; i++ {
-			result = append(result)
 		}
 		return result
 	}

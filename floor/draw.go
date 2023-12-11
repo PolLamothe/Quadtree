@@ -24,7 +24,7 @@ func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCam, YCam, XCharacter
 	} else if YShift < 0 {
 		futureY = -1
 	}
-	if configuration.Global.CameraBlockEdge {
+	if configuration.Global.CameraBlockEdge && !configuration.Global.GenerationInfinie {
 		if (f.X == configuration.Global.NumTileX/2 && XCharacter+futureX <= configuration.Global.NumTileX/2) || XCam != XCharacter || (f.X == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
 			XShift = 0
 		}
