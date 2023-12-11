@@ -51,6 +51,7 @@ type Configuration struct {
 	SingleUsagePortal             bool
 	CameraBlockEdge               bool
 	CameraFluide                  bool
+	GenerationInfinie             bool
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`

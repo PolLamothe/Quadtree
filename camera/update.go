@@ -31,7 +31,7 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 	var MapWidth, MapHeight int
 	MapHeight = q.Height
 	MapWidth = q.Width
-	if configuration.Global.CameraBlockEdge && (*f).AllBlockDisplayed {
+	if configuration.Global.CameraBlockEdge && (*f).AllBlockDisplayed && !configuration.Global.GenerationInfinie {
 		if characterPosX-configuration.Global.NumTileX/2 >= 0 && characterPosX+configuration.Global.NumTileX/2 <= MapWidth {
 			c.X = characterPosX
 		}
