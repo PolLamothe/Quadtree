@@ -15,5 +15,11 @@ func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blo
 	blocking[1] = relativeXPos >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
 	blocking[2] = relativeYPos >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
 	blocking[3] = relativeXPos <= 0 || f.Content[relativeYPos][relativeXPos-1] == -1
+	if configuration.Global.BlockingWater{
+		blocking[0] = blocking[0] || f.Content[relativeYPos-1][relativeXPos] == 4
+		blocking[1] = blocking[1] || f.Content[relativeYPos][relativeXPos+1] == 4
+		blocking[2] = blocking[2] || f.Content[relativeYPos+1][relativeXPos] == 4
+		blocking[3] = blocking[3] || f.Content[relativeYPos][relativeXPos-1] == 4
+	}
 	return blocking
 }

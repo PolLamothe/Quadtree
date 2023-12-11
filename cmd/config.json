@@ -16,5 +16,6 @@
     "SingleUsagePortal" : false,
     "CameraBlockEdge" : false,
     "CameraFluide" : true,
-    "GenerationInfinie" : true
+    "GenerationInfinie" : true,
+    "BlockingWater":true
 }
