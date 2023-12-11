@@ -2,7 +2,6 @@ package quadtree
 
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
-	"math/rand"
 )
 
 // GetContent remplit le tableau contentHolder (qui représente
@@ -17,11 +16,7 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 			return -1
 		}
 	}
-	if (*current).content > -1 {
-		return (*current).content
-	}
-	if configuration.Global.GenerationInfinie && current.width == 1 && current.height == 1 {
-		(*current).content = rand.Intn(5)
+	if (*current).content != -1 {
 		return (*current).content
 	}
 	if (currentWidth)%2 != 0 {
@@ -43,16 +38,39 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 		yChoice = 2
 	}
 	var suivant *node
+	var suivant1 node
 	if xChoice == 1 && yChoice == 1 {
-		suivant = (*current).topLeftNode
+		if configuration.Global.GenerationInfinie && (*current).topLeftNode == nil {
+			suivant1 = Recur("topLeft", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
+			(*current).topLeftNode = &suivant1
+			suivant = &suivant1
+		} else {
+			suivant = (*current).topLeftNode
+		}
 	} else if xChoice == 2 && yChoice == 1 {
-		suivant = (*current).topRightNode
+		if configuration.Global.GenerationInfinie && (*current).topRightNode == nil {
+			suivant1 = Recur("topRight", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
+			(*current).topRightNode = &suivant1
+			suivant = &suivant1
+		} else {
+			suivant = (*current).topRightNode
+		}
 	} else if xChoice == 1 && yChoice == 2 {
-		suivant = (*current).bottomLeftNode
+		if configuration.Global.GenerationInfinie && (*current).bottomLeftNode == nil {
+			suivant1 = Recur("bottomLeft", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
+			(*current).bottomLeftNode = &suivant1
+			suivant = &suivant1
+		} else {
+			suivant = (*current).bottomLeftNode
+		}
 	} else if xChoice == 2 && yChoice == 2 {
-		suivant = (*current).bottomRightNode
-	} else {
-		return -1
+		if configuration.Global.GenerationInfinie && (*current).bottomRightNode == nil {
+			suivant1 = Recur("bottomRight", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
+			(*current).bottomRightNode = &suivant1
+			suivant = &suivant1
+		} else {
+			suivant = (*current).bottomRightNode
+		}
 	}
 	return q.getNumberFromQuad(indexX, indexY, height, width, suivant)
 }
