@@ -71,6 +71,8 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 		} else {
 			suivant = (*current).bottomRightNode
 		}
+	} else {
+		return -1
 	}
 	return q.getNumberFromQuad(indexX, indexY, height, width, suivant)
 }
