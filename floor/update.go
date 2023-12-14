@@ -60,28 +60,54 @@ func decalRight2(array *[]int) {
 // le sol est récupéré depuis un tableau, qui a été lu dans un fichier
 func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 	var Ytile [][]int = f.FullContent
-	var Yfill []int
-	for i := 0; i < len(Ytile[0])+configuration.Global.NumTileX; i++ { //on définie une array avec que des -1  pour remplir les troue sur sur l'axe Y
-		Yfill = append(Yfill, -1)
-	}
-	for i := 0; i < configuration.Global.NumTileY; i++ { // on ajoute cette array au début et a la fin de la map
-		Ytile = append(Ytile, Yfill)
-		decalRight(&Ytile)
-		Ytile[0] = Yfill
-	}
-	for i := 0; i < len(Ytile); i++ { //pour chaque ligne on ajoute des -1 au début et a la fin pour remplir les troue sur l'axe X
-		for x := 0; x < configuration.Global.NumTileX; x++ {
-			Ytile[i] = append(Ytile[i], -1)
-			decalRight2(&Ytile[i])
-			Ytile[i][0] = -1
+	if !configuration.Global.TerreRonde {
+		var Yfill []int
+		for i := 0; i < len(Ytile[0])+configuration.Global.NumTileX; i++ { //on définie une array avec que des -1  pour remplir les troue sur sur l'axe Y
+			Yfill = append(Yfill, -1)
 		}
+		for i := 0; i < configuration.Global.NumTileY; i++ { // on ajoute cette array au début et a la fin de la map
+			Ytile = append(Ytile, Yfill)
+			decalRight(&Ytile)
+			Ytile[0] = Yfill
+		}
+		for i := 0; i < len(Ytile); i++ { //pour chaque ligne on ajoute des -1 au début et a la fin pour remplir les troue sur l'axe X
+			for x := 0; x < configuration.Global.NumTileX; x++ {
+				Ytile[i] = append(Ytile[i], -1)
+				decalRight2(&Ytile[i])
+				Ytile[i][0] = -1
+			}
+		}
+		var Xtile [][]int
+		Xtile = Ytile[configuration.Global.NumTileY/2+camYPos : configuration.Global.NumTileY/2+camYPos+configuration.Global.NumTileY] //on sélectionne uniquement les case qui doivent etre affiché sur l'axe Y
+		for i := 0; i < len(Xtile); i++ {                                                                                              //on sélectionne uniquement les case qui doivent etre affiché sur l'axe X
+			Xtile[i] = Xtile[i][configuration.Global.NumTileX/2+camXPos : configuration.Global.NumTileX/2+camXPos+configuration.Global.NumTileX]
+		}
+		f.Content = Xtile
+	} else {
+		var result [][]int
+		for i := 0; i < configuration.Global.NumTileY; i++ {
+			result = append(result, []int{})
+			for x := 0; x < configuration.Global.NumTileX; x++ {
+				var indexX, indexY int = camXPos - configuration.Global.NumTileX/2 + x, camYPos - configuration.Global.NumTileY/2 + i
+				if indexX < 0 || indexY < 0 || indexX >= len(f.FullContent[0]) || indexY >= len(f.FullContent) {
+					if indexY < 0 {
+						indexY = (len(f.FullContent) - (-(indexY))%len(f.FullContent))
+					}
+					if indexX < 0 {
+						indexX = (indexX) + len(f.FullContent[0])
+					}
+					if indexY >= len(f.FullContent) {
+						indexY = ((indexY) % len(f.FullContent))
+					}
+					if indexX >= len(f.FullContent[0]) {
+						indexX = (indexX) % len(f.FullContent[0])
+					}
+				}
+				result[i] = append(result[i], f.FullContent[indexY][indexX])
+			}
+		}
+		f.Content = result
 	}
-	var Xtile [][]int
-	Xtile = Ytile[configuration.Global.NumTileY/2+camYPos : configuration.Global.NumTileY/2+camYPos+configuration.Global.NumTileY] //on sélectionne uniquement les case qui doivent etre affiché sur l'axe Y
-	for i := 0; i < len(Xtile); i++ {                                                                                              //on sélectionne uniquement les case qui doivent etre affiché sur l'axe X
-		Xtile[i] = Xtile[i][configuration.Global.NumTileX/2+camXPos : configuration.Global.NumTileX/2+camXPos+configuration.Global.NumTileX]
-	}
-	f.Content = Xtile
 }
 
 // le sol est récupéré depuis un quadtree, qui a été lu dans un fichier
