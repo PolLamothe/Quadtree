@@ -60,6 +60,20 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				c.Y += c.yInc
 				c.xInc = 0
 				c.yInc = 0
+				if configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {
+					if c.X < 0 {
+						c.X = f.QuadtreeContent.Width + c.X
+					}
+					if c.Y < 0 {
+						c.Y = f.QuadtreeContent.Height + c.Y
+					}
+					if c.X >= f.QuadtreeContent.Width {
+						c.X = c.X % f.QuadtreeContent.Width
+					}
+					if c.Y >= f.QuadtreeContent.Height {
+						c.Y = c.Y % f.QuadtreeContent.Height
+					}
+				}
 				if portal.IsPortalHere(c.X, c.Y) && len(portal.PortalStore) == 2 {
 					var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
 					c.X = newCoord[0]

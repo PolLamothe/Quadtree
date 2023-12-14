@@ -11,9 +11,26 @@ import (
 func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *node) int {
 	var currentWidth int = (*current).width
 	var currentHeight int = (*current).height
-	if !configuration.Global.GenerationInfinie {
+	if !configuration.Global.GenerationInfinie && !configuration.Global.TerreRonde {
 		if indexX < 0 || indexY < 0 || indexX > width || indexY > height {
 			return -1
+		}
+	}
+	if configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {
+		if indexX < 0 || indexY < 0 || indexX >= width || indexY >= height {
+			if indexY < 0 {
+				indexY = (height - (-(indexY))%height)
+			}
+			if indexX < 0 {
+				indexX = (indexX) + width
+			}
+			if indexY >= height {
+				indexY = ((indexY) % height)
+			}
+			if indexX >= width {
+				indexX = (indexX) % width
+			}
+			return q.getNumberFromQuad(indexX, indexY, height, width, current)
 		}
 	}
 	if (*current).content != -1 {
