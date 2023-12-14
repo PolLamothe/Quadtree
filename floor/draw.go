@@ -48,6 +48,23 @@ func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCam, YCam, XCharacter
 				if portal.IsPortalHere(f.X-len(f.Content[0])/2+x, f.Y-len(f.Content)/2+y) {
 					screen.DrawImage(assets.PortalIMG, op)
 				}
+				if configuration.Global.TerreRonde && configuration.Global.Portal {
+					var XIndex, YIndex int = f.X - len(f.Content[0])/2 + x, f.Y - len(f.Content)/2 + y // position de la case qui est affichée
+					//on detecte la vrai position des case hors-champ
+					if XIndex >= 0 {
+						XIndex = XIndex % f.QuadtreeContent.Width
+					} else {
+						XIndex = (f.QuadtreeContent.Width + (XIndex % f.QuadtreeContent.Width)) % f.QuadtreeContent.Width
+					}
+					if YIndex >= 0 {
+						YIndex = YIndex % f.QuadtreeContent.Height
+					} else {
+						YIndex = (f.QuadtreeContent.Height + (YIndex % f.QuadtreeContent.Height)) % f.QuadtreeContent.Height
+					}
+					if portal.IsPortalHere(XIndex, YIndex) {
+						screen.DrawImage(assets.PortalIMG, op)
+					}
+				}
 			}
 		}
 	}

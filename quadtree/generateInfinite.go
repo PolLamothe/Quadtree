@@ -1,25 +1,24 @@
 package quadtree
 
-import (
-	"fmt"
-)
+/*
+GenerateInfinite permet d'étendre le quadtree actuelle en placant la map actuelle dans un des coins du nouveau quadtree
+*/
 
 func (q *Quadtree) GenerateInfinite(postion string) {
-	var Root *node = &node{width: q.Width * 2, height: q.Height * 2, content: -1}
-	fmt.Println(postion)
-	if postion == "TopLeft" { // marche
+	var Root *node = &node{width: q.Width * 2, height: q.Height * 2, content: -1} //on définie les dimensions de la Root du nouveau quadtree
+	if postion == "TopLeft" {                                                     //on définie les coordonnées de la map déja générée en fonction de la position dans la Root
 		(*Root).TopLeftX = q.Root.TopLeftX
 		(*Root).TopLeftY = q.Root.TopLeftY
 	}
-	if postion == "TopRight" { // marche
+	if postion == "TopRight" {
 		(*Root).TopLeftY = q.Root.TopLeftY
 		(*Root).TopLeftX = q.Root.TopLeftX - q.Width
 	}
-	if postion == "BottomLeft" { // marche
+	if postion == "BottomLeft" {
 		(*Root).TopLeftY = q.Root.TopLeftY - q.Height
 		(*Root).TopLeftX = q.Root.TopLeftX
 	}
-	if postion == "BottomRight" { // marche
+	if postion == "BottomRight" {
 		(*Root).TopLeftX = q.Root.TopLeftX - q.Width
 		(*Root).TopLeftY = q.Root.TopLeftY - q.Height
 	}

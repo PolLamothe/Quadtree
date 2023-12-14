@@ -43,7 +43,7 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 	if !(laNode.width == 1 && laNode.height == 1) && !configuration.Global.GenerationInfinie { //on vérifie si tout les blocs dans le node actuelle sont les mêmes
 		var origin int
 		state = true
-		var flootContentX, flootContentY int = laNode.TopLeftY, laNode.TopLeftX
+		var flootContentX, flootContentY int = laNode.TopLeftX, laNode.TopLeftY
 		var XRange, YRange int = laNode.TopLeftX, laNode.TopLeftY
 		origin = flootContent[flootContentY][flootContentX]
 		for i := YRange; i < YRange+laNode.height; i++ {

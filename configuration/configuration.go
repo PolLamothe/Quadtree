@@ -52,6 +52,7 @@ type Configuration struct {
 	CameraBlockEdge               bool
 	CameraFluide                  bool
 	GenerationInfinie             bool
+	TerreRonde                    bool
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`
