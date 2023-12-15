@@ -94,10 +94,22 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 	return q.getNumberFromQuad(indexX, indexY, height, width, suivant)
 }
 
-func (q Quadtree) GetContent(topLeftX, topLeftY int, contentHolder [][]int) {
-	for i := 0; i < len(contentHolder); i++ {
-		for x := 0; x < len(contentHolder[i]); x++ {
-			contentHolder[i][x] = q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.Height, q.Width, q.Root)
+func (q Quadtree) GetContent(topLeftX, topLeftY int, contentHolder [][]int) [][]int {
+	contentHolder = [][]int{}
+	var lenY, lenX int = configuration.Global.NumTileY, configuration.Global.NumTileX
+	if configuration.Global.CameraFluide {
+		lenY += 2
+		lenX += 2
+	}
+	for i := 0; i < lenY; i++ {
+		contentHolder = append(contentHolder, []int{})
+		for x := 0; x < lenX; x++ {
+			if configuration.Global.CameraFluide {
+				contentHolder[i] = append(contentHolder[i], q.getNumberFromQuad(topLeftX+x-1, topLeftY+i-1, q.Height, q.Width, q.Root))
+			} else {
+				contentHolder[i] = append(contentHolder[i], q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.Height, q.Width, q.Root))
+			}
 		}
 	}
+	return contentHolder
 }

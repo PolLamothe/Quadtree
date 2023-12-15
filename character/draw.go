@@ -48,7 +48,14 @@ func (c *Character) Draw(screen *ebiten.Image, camX, camY, MapWidth, MapHeight i
 		} else if yShift < 0 {
 			futureY = -1
 		}
-		if !configuration.Global.GenerationInfinie && configuration.Global.CameraBlockEdge && ((((camX == configuration.Global.NumTileX/2 && c.X+futureX <= camX) || (camX == MapWidth-configuration.Global.NumTileX/2 && c.X+futureX >= camX)) && orientation == "X") || (((camY == configuration.Global.NumTileY/2 && c.Y+futureY <= camY) || (camY == MapHeight-configuration.Global.NumTileY/2 && c.Y+futureY >= camY)) && orientation == "Y")) && allBlockDisplayed { //condition a remplir pour que le personnage bouge visuellement
+		var camXExtern, camYExtern int = camX, camY
+		if configuration.Global.NumTileX%2 != 0 {
+			camXExtern++
+		}
+		if configuration.Global.NumTileY%2 != 0 {
+			camYExtern++
+		}
+		if configuration.Global.CameraBlockEdge && ((((camX == configuration.Global.NumTileX/2 && c.X+futureX <= camX) || (camXExtern == MapWidth-configuration.Global.NumTileX/2 && c.X+futureX >= camX)) && orientation == "X") || (((camY == configuration.Global.NumTileY/2 && c.Y+futureY <= camY) || (camYExtern == MapHeight-configuration.Global.NumTileY/2 && c.Y+futureY >= camY)) && orientation == "Y")) && allBlockDisplayed { //condition a remplir pour que le personnage bouge visuellement
 			xPos = (xTileForDisplay)*configuration.Global.TileSize + xShift
 			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
 		} else {
