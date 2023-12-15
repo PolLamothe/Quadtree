@@ -45,10 +45,19 @@ func (f *Floor) updateGridFloor(camXPos, camYPos int) {
 func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 	if !configuration.Global.TerreRonde {
 		var result [][]int
-		for i := 0; i < configuration.Global.NumTileY; i++ {
+		var lenY, lenX int = configuration.Global.NumTileY, configuration.Global.NumTileX
+		if configuration.Global.CameraFluide {
+			lenY += 2
+			lenX += 2
+		}
+		for i := 0; i < lenY; i++ {
 			result = append(result, []int{})
-			for x := 0; x < configuration.Global.NumTileX; x++ {
+			for x := 0; x < lenX; x++ {
 				var indexX, indexY int = camXPos - configuration.Global.NumTileX/2 + x, camYPos - configuration.Global.NumTileY/2 + i
+				if configuration.Global.CameraFluide {
+					indexX -= 1
+					indexY -= 1
+				}
 				if indexX < 0 || indexY < 0 || indexX >= len(f.FullContent[0]) || indexY >= len(f.FullContent) {
 					result[i] = append(result[i], -1)
 				} else {
@@ -59,10 +68,19 @@ func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 		f.Content = result
 	} else {
 		var result [][]int
-		for i := 0; i < configuration.Global.NumTileY; i++ {
+		var lenY, lenX int = configuration.Global.NumTileY, configuration.Global.NumTileX
+		if configuration.Global.CameraFluide {
+			lenY += 2
+			lenX += 2
+		}
+		for i := 0; i < lenY; i++ {
 			result = append(result, []int{})
-			for x := 0; x < configuration.Global.NumTileX; x++ {
+			for x := 0; x < lenX; x++ {
 				var indexX, indexY int = camXPos - configuration.Global.NumTileX/2 + x, camYPos - configuration.Global.NumTileY/2 + i
+				if configuration.Global.CameraFluide {
+					indexX -= 1
+					indexY -= 1
+				}
 				if indexX < 0 || indexY < 0 || indexX >= len(f.FullContent[0]) || indexY >= len(f.FullContent) {
 					if indexY < 0 {
 						indexY = (len(f.FullContent) - (-(indexY))%len(f.FullContent))
@@ -116,5 +134,5 @@ func (f *Floor) updateQuadtreeFloor(camXPos, camYPos *int) {
 			}
 		}
 	}
-	f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
+	f.Content = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
 }

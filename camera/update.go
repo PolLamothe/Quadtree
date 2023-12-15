@@ -32,25 +32,21 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 	MapHeight = q.Height
 	MapWidth = q.Width
 	if configuration.Global.CameraBlockEdge && !configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {
-		if MapWidth >= configuration.Global.NumTileX && MapHeight >= configuration.Global.NumTileY {
+		if MapWidth >= configuration.Global.NumTileX && MapHeight >= configuration.Global.NumTileY && characterPosX < configuration.Global.NumTileX/2 && characterPosY < configuration.Global.NumTileY/2 {
 			c.X = configuration.Global.NumTileX / 2
 			c.Y = configuration.Global.NumTileY / 2
 			(*f).AllBlockDisplayed = true
 		}
 	}
 	if configuration.Global.CameraBlockEdge && (*f).AllBlockDisplayed && !configuration.Global.GenerationInfinie {
-		if characterPosX-configuration.Global.NumTileX/2 >= 0 && characterPosX+configuration.Global.NumTileX/2 <= MapWidth {
+		if characterPosX-configuration.Global.NumTileX/2 >= 0 && characterPosX+configuration.Global.NumTileX/2 < MapWidth {
 			c.X = characterPosX
 		}
-		if characterPosY-configuration.Global.NumTileY/2 >= 0 && characterPosY+configuration.Global.NumTileY/2 <= MapHeight {
+		if characterPosY-configuration.Global.NumTileY/2 >= 0 && characterPosY+configuration.Global.NumTileY/2 < MapHeight {
 			c.Y = characterPosY
 		}
+
 	} else {
-		if (characterPosX-configuration.Global.NumTileX/2 >= 0) && (characterPosY-configuration.Global.NumTileY/2 >= 0) {
-			if characterPosX+configuration.Global.NumTileX/2 < MapWidth && characterPosY+configuration.Global.NumTileY/2 < MapHeight {
-				(*f).AllBlockDisplayed = true
-			}
-		}
 		c.X = characterPosX
 		c.Y = characterPosY
 	}

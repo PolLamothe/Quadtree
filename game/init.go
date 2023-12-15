@@ -9,6 +9,12 @@ func (g *Game) Init() {
 	if configuration.Global.GenerationInfinie {
 		configuration.Global.FloorKind = 2
 	}
+	if configuration.Global.TerreRonde {
+		configuration.Global.CameraBlockEdge = false
+	}
+	if configuration.Global.GenerationInfinie {
+		configuration.Global.CameraBlockEdge = false
+	}
 	g.Character.Init()
 	g.floor.Init()
 	g.camera.Init(g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, &g.floor.AllBlockDisplayed)
