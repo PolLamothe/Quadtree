@@ -5,7 +5,7 @@ import (
 )
 
 // Init met en place une caméra.
-func (c *Camera) Init() {
+func (c *Camera) Init(MapWidth, MapHeight int, AllBlockDisplayed *bool) {
 	if configuration.Global.CameraMode == Static {
 		c.X = configuration.Global.ScreenCenterTileX
 		c.Y = configuration.Global.ScreenCenterTileY

@@ -41,22 +41,6 @@ func (f *Floor) updateGridFloor(camXPos, camYPos int) {
 	}
 }
 
-func decalRight(array *[][]int) {
-	var result [][]int = [][]int{{}}
-	for i := 0; i < len(*array); i++ {
-		result = append(result, (*array)[i])
-	}
-	*array = result
-}
-
-func decalRight2(array *[]int) {
-	var result []int = []int{0}
-	for i := 0; i < len(*array); i++ {
-		result = append(result, (*array)[i])
-	}
-	*array = result
-}
-
 // le sol est récupéré depuis un tableau, qui a été lu dans un fichier
 func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 	if !configuration.Global.TerreRonde {

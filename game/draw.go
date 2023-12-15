@@ -19,7 +19,7 @@ import (
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.Character.RefreshShift()
 	g.floor.Draw(screen, int(float64(g.Character.XShift)*1.3), int(float64(g.Character.YShift)*1.3), g.camera.X, g.camera.Y, g.Character.X, g.Character.Y)
-	g.Character.Draw(screen, g.camera.X, g.camera.Y, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height)
+	g.Character.Draw(screen, g.camera.X, g.camera.Y, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.floor.AllBlockDisplayed)
 	if configuration.Global.DebugMode {
 		g.drawDebug(screen)
 	}
