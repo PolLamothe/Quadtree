@@ -12,9 +12,9 @@ import (
 // Les champs non exportés sont :
 //   - camera : la représentation de la caméra
 //   - floor : la représentation du terrain
-//   - Character : la représentation du personnage
+//   - character : la représentation du personnage
 type Game struct {
 	camera    camera.Camera
 	floor     floor.Floor
-	Character character.Character
+	character character.Character
 }

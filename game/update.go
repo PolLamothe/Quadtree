@@ -16,8 +16,10 @@ func (g *Game) Update() error {
 	if inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		configuration.Global.DebugMode = !configuration.Global.DebugMode
 	}
-	g.Character.Update(g.floor.Blocking(g.Character.X, g.Character.Y, g.camera.X, g.camera.Y), &(g.floor))
-	g.camera.Update(g.Character.X, g.Character.Y, &(g.floor), g.floor.QuadtreeContent)
-	g.floor.Update(&g.camera.X, &g.camera.Y)
+
+	g.character.Update(g.floor.Blocking(g.character.X, g.character.Y, g.camera.X, g.camera.Y))
+	g.camera.Update(g.character.X, g.character.Y)
+	g.floor.Update(g.camera.X, g.camera.Y)
+
 	return nil
 }
