@@ -11,5 +11,5 @@ func (g *Game) Init() {
 	}
 	g.Character.Init()
 	g.floor.Init()
-	g.camera.Init()
+	g.camera.Init(g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, &g.floor.AllBlockDisplayed)
 }
