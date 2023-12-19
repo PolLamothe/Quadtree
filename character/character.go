@@ -31,4 +31,5 @@ type Character struct {
 	shift               int
 	animationFrameCount int
 	XShift, YShift      int
+	CharacterNumber     int
 }

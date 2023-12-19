@@ -53,6 +53,10 @@ type Configuration struct {
 	CameraFluide                  bool
 	GenerationInfinie             bool
 	TerreRonde                    bool
+	MultiplayerKind               int
+	MultiplayerIP                 string
+	ServerPort                    string
+	ClientPort                    string
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`

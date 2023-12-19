@@ -1,7 +1,7 @@
 {
     "DebugMode": false,
-    "NumTileX": 30,
-    "NumTileY": 30,
+    "NumTileX": 15,
+    "NumTileY": 15,
     "TileSize": 16,
     "NumCharacterAnimImages": 5,
     "NumFramePerCharacterAnimImage": 5,
@@ -14,8 +14,12 @@
     "RandomTileY" : 8,
     "Portal":true,
     "SingleUsagePortal" : false,
-    "CameraBlockEdge" : false,
+    "CameraBlockEdge" : true,
     "CameraFluide" : true,
     "GenerationInfinie" : false,
-    "TerreRonde": true
+    "TerreRonde": true,
+    "MultiplayerKind":2,
+    "MultiplayerIP" : "localhost",
+    "ServerPort" : "3333",
+    "ClientPort" : "3334"
 }

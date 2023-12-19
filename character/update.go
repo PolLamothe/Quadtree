@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
 )
 
@@ -58,6 +59,15 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				c.moving = false
 				c.X += c.xInc
 				c.Y += c.yInc
+				if configuration.Global.MultiplayerKind != 0 {
+					multiplayer.SendPos(c.X, c.Y)
+				}
+				if configuration.Global.MultiplayerKind == 1 {
+					multiplayer.ServerPos = map[string]int{"X": c.X, "Y": c.Y}
+				}
+				if configuration.Global.MultiplayerKind == 2 {
+					multiplayer.ClientPos = map[string]int{"X": c.X, "Y": c.Y}
+				}
 				c.xInc = 0
 				c.yInc = 0
 				if configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {

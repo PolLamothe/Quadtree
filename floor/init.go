@@ -1,6 +1,7 @@
 package floor
 
 import (
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"io/ioutil"
 	"math/rand"
 	"strconv"
@@ -21,38 +22,56 @@ func (f *Floor) Init() {
 	switch configuration.Global.FloorKind {
 	case fromFileFloor:
 		if configuration.Global.RandomGeneration {
-			var RandomFloor [][]int
-			for i := 0; i < configuration.Global.RandomTileY; i++ {
-				RandomFloor = append(RandomFloor, []int{})
-				for x := 0; x < configuration.Global.RandomTileX; x++ {
-					var random int = rand.Intn(5)
-					RandomFloor[i] = append(RandomFloor[i], random)
+			if configuration.Global.MultiplayerKind != 2 {
+				var RandomFloor [][]int
+				for i := 0; i < configuration.Global.RandomTileY; i++ {
+					RandomFloor = append(RandomFloor, []int{})
+					for x := 0; x < configuration.Global.RandomTileX; x++ {
+						var random int = rand.Intn(5)
+						RandomFloor[i] = append(RandomFloor[i], random)
+					}
 				}
+				f.FullContent = RandomFloor
+			} else {
+				f.FullContent = multiplayer.Map
 			}
-			f.FullContent = RandomFloor
 			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 		} else {
+			if configuration.Global.MultiplayerKind != 2 {
+				f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+			} else {
+				f.FullContent = multiplayer.Map
+			}
 			f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
 			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 		}
 	case quadTreeFloor:
 		f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
 		if configuration.Global.RandomGeneration && !configuration.Global.GenerationInfinie {
-			var RandomFloor [][]int
-			for i := 0; i < configuration.Global.RandomTileY; i++ {
-				RandomFloor = append(RandomFloor, []int{})
-				for x := 0; x < configuration.Global.RandomTileX; x++ {
-					var random int = rand.Intn(5)
-					RandomFloor[i] = append(RandomFloor[i], random)
+			if configuration.Global.MultiplayerKind != 2 {
+				var RandomFloor [][]int
+				for i := 0; i < configuration.Global.RandomTileY; i++ {
+					RandomFloor = append(RandomFloor, []int{})
+					for x := 0; x < configuration.Global.RandomTileX; x++ {
+						var random int = rand.Intn(5)
+						RandomFloor[i] = append(RandomFloor[i], random)
+					}
 				}
+				f.FullContent = RandomFloor
+			} else {
+				f.FullContent = multiplayer.Map
 			}
-			f.FullContent = RandomFloor
-			f.QuadtreeContent = quadtree.MakeFromArray(RandomFloor, len(RandomFloor[0]), len(RandomFloor), 0, 0)
+			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 		} else {
 			if configuration.Global.GenerationInfinie {
 				f.QuadtreeContent = quadtree.MakeFromArray([][]int{}, configuration.Global.NumTileX*4, configuration.Global.NumTileY*4, -configuration.Global.RandomTileX, -configuration.Global.RandomTileY)
 			} else {
-				f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+				if configuration.Global.MultiplayerKind != 2 {
+					f.FullContent = readFloorFromFile(configuration.Global.FloorFile)
+
+				} else {
+					f.FullContent = multiplayer.Map
+				}
 				f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 			}
 		}
