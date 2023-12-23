@@ -18,6 +18,7 @@ func (g *Game) Init() {
 	}
 	if configuration.Global.TerreRonde {
 		configuration.Global.CameraBlockEdge = false
+		configuration.Global.GenerationInfinie = false
 	}
 	if configuration.Global.GenerationInfinie {
 		configuration.Global.CameraBlockEdge = false

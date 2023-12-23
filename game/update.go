@@ -33,6 +33,6 @@ func (g *Game) Update() error {
 	} else { // si on est en mode server la caméra suit le personnage 2
 		g.camera.Update(g.Character2.X, g.Character2.Y, &(g.floor), g.floor.QuadtreeContent, g.Character2.XShift, g.Character2.YShift)
 	}
-	g.floor.Update(int(g.camera.X), int(g.camera.Y))
+	g.floor.Update(int(g.camera.X), int(g.camera.Y), g.Character.XShift, g.Character.YShift)
 	return nil
 }
