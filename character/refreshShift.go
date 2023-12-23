@@ -1,7 +1,6 @@
 package character
 
 func (c *Character) RefreshShift() {
-
 	xShift := 0
 	yShift := 0
 	switch c.orientation {

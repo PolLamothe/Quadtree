@@ -20,8 +20,22 @@ func (c *Character) Init() {
 			if c.CharacterNumber == 1 {
 				c.X = configuration.Global.ScreenCenterTileX
 				c.Y = configuration.Global.ScreenCenterTileY
-				multiplayer.ClientPos["X"] = 0
-				multiplayer.ClientPos["Y"] = 0
+				multiplayer.ServerPos["X"] = 0
+				multiplayer.ServerPos["Y"] = 0
+			}
+			if c.CharacterNumber == 2 {
+				if multiplayer.ServerPos["X"] == 0 {
+					c.X = configuration.Global.ScreenCenterTileX + 1
+				} else {
+					c.X = configuration.Global.ScreenCenterTileX
+				}
+				if multiplayer.ServerPos["Y"] == 0 {
+					c.Y = configuration.Global.ScreenCenterTileY + 1
+				} else {
+					c.Y = configuration.Global.ScreenCenterTileY
+				}
+				multiplayer.ClientPos["X"] = c.X
+				multiplayer.ClientPos["Y"] = c.Y
 			}
 		} else {
 			if c.CharacterNumber == 1 {

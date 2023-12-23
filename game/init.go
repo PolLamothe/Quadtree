@@ -24,8 +24,10 @@ func (g *Game) Init() {
 	}
 	if configuration.Global.MultiplayerKind != 2 {
 		g.floor.Init()
-		g.Character.Init()
 		g.Character.CharacterNumber = 1
+		g.Character.Init()
+		g.Character2.CharacterNumber = 2
+		g.Character2.Init()
 	}
 	g.camera.Init(g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, &g.floor.AllBlockDisplayed)
 	if configuration.Global.MultiplayerKind == 2 {
@@ -33,11 +35,13 @@ func (g *Game) Init() {
 		for {
 			if multiplayer.MapReceived {
 				g.floor.Init()
+				g.Character.CharacterNumber = 1
 				g.Character.Init()
+				g.Character2.CharacterNumber = 2
+				g.Character2.Init()
 				break
 			}
 		}
-
 	}
 	if configuration.Global.MultiplayerKind == 1 {
 		multiplayer.Map = g.floor.FullContent

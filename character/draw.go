@@ -14,7 +14,7 @@ import (
 // fonction des charactéristiques du personnage (position, orientation,
 // étape d'animation, etc) et de la position de la caméra (le personnage
 // est affiché relativement à la caméra).
-func (c *Character) Draw(screen *ebiten.Image, camX, camY, MapWidth, MapHeight int, allBlockDisplayed bool) {
+func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, camY float64, allBlockDisplayed bool) {
 	xShift := 0
 	yShift := 0
 	var orientation string
@@ -32,10 +32,31 @@ func (c *Character) Draw(screen *ebiten.Image, camX, camY, MapWidth, MapHeight i
 		xShift = c.shift
 		orientation = "X"
 	}
-	xTileForDisplay := c.X - camX + configuration.Global.ScreenCenterTileX
-	yTileForDisplay := c.Y - camY + configuration.Global.ScreenCenterTileY
+	var camX2, camY2 int = int(camX), int(camY)
+
+	var numTileXHalf, numTileYHalf int = configuration.Global.NumTileX / 2, configuration.Global.NumTileY / 2
+
+	if configuration.Global.NumTileX%2 != 0 {
+		numTileXHalf++
+	}
+	if configuration.Global.NumTileY%2 != 0 {
+		numTileYHalf++
+	}
+
+	if configuration.Global.CameraBlockEdge && configuration.Global.CameraFluide {
+		if xShift < 0 && camX2+1 == c.X && camX2+numTileXHalf < MapWidth {
+			camX2++
+		}
+		if yShift < 0 && camY2+1 == c.Y && camY2+numTileYHalf < MapHeight {
+			camY2++
+		}
+	}
+
+	xTileForDisplay := c.X - camX2 + configuration.Global.ScreenCenterTileX
+	yTileForDisplay := c.Y - camY2 + configuration.Global.ScreenCenterTileY
 	xPos := (xTileForDisplay)*configuration.Global.TileSize + xShift
 	yPos := (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
+
 	if configuration.Global.CameraFluide {
 		var futureX, futureY int = 0, 0
 		if xShift > 0 {
@@ -48,19 +69,56 @@ func (c *Character) Draw(screen *ebiten.Image, camX, camY, MapWidth, MapHeight i
 		} else if yShift < 0 {
 			futureY = -1
 		}
-		var camXExtern, camYExtern int = camX, camY
+		var camXExtern, camYExtern int = camX2, camY2
 		if configuration.Global.NumTileX%2 != 0 {
 			camXExtern++
 		}
 		if configuration.Global.NumTileY%2 != 0 {
 			camYExtern++
 		}
-		if configuration.Global.CameraBlockEdge && ((((camX == configuration.Global.NumTileX/2 && c.X+futureX <= camX) || (camXExtern == MapWidth-configuration.Global.NumTileX/2 && c.X+futureX >= camX)) && orientation == "X") || (((camY == configuration.Global.NumTileY/2 && c.Y+futureY <= camY) || (camYExtern == MapHeight-configuration.Global.NumTileY/2 && c.Y+futureY >= camY)) && orientation == "Y")) && allBlockDisplayed { //condition a remplir pour que le personnage bouge visuellement
+		if configuration.Global.CameraBlockEdge && ((((camX2 == configuration.Global.NumTileX/2 && c.X+futureX <= camX2) || (camXExtern == MapWidth-configuration.Global.NumTileX/2 && c.X+futureX >= camX2)) && orientation == "X") || (((camY2 == configuration.Global.NumTileY/2 && c.Y+futureY <= camY2) || (camYExtern == MapHeight-configuration.Global.NumTileY/2 && c.Y+futureY >= camY2)) && orientation == "Y")) && allBlockDisplayed { //condition a remplir pour que le personnage bouge visuellement
 			xPos = (xTileForDisplay)*configuration.Global.TileSize + xShift
 			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
 		} else {
-			xPos = (xTileForDisplay) * configuration.Global.TileSize
-			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+			if configuration.Global.CameraBlockEdge {
+				if camX2 == c.X {
+					xPos = ((configuration.Global.ScreenCenterTileX) * configuration.Global.TileSize)
+				} else {
+					xPos = xTileForDisplay * configuration.Global.TileSize
+				}
+				if camY2 == c.Y {
+					yPos = ((configuration.Global.ScreenCenterTileY)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2)
+				} else {
+					yPos = yTileForDisplay*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+				}
+			} else {
+				if yShift < 0 && camY >= 0 {
+					yTileForDisplay--
+				}
+				if xShift < 0 && camX >= 0 {
+					xTileForDisplay--
+				}
+				if configuration.Global.GenerationInfinie {
+					if xShift > 0 && camX < 0 {
+						xTileForDisplay++
+					}
+					if yShift > 0 && camY < 0 {
+						yTileForDisplay++
+					}
+				}
+				xPos = xTileForDisplay * configuration.Global.TileSize
+				yPos = yTileForDisplay*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+			}
+		}
+		if configuration.Global.MultiplayerKind != 0 {
+			if configuration.Global.MultiplayerKind == c.CharacterNumber {
+				xPos = (xTileForDisplay) * configuration.Global.TileSize
+				yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+			}
+		}
+		if false {
+			c.X = xPos
+			c.Y = yPos
 		}
 	}
 

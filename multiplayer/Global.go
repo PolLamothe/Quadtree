@@ -2,14 +2,16 @@ package multiplayer
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 )
 
 var Conn net.Conn
 var Map [][]int = [][]int{{}}
 var MapReceived bool = false
-var ServerPos map[string]int = map[string]int{}
-var ClientPos map[string]int = map[string]int{}
+var WaitingForResponse bool = false
+var ServerPos map[string]int = map[string]int{"X": 0, "Y": 0}
+var ClientPos map[string]int = map[string]int{"X": 0, "Y": 0}
 
 func SendMap() {
 	JSONData := map[string]interface{}{
@@ -17,16 +19,11 @@ func SendMap() {
 		"Data": Map,
 	}
 	data, _ := json.Marshal(JSONData)
+	WaitingForResponse = true
 	Conn.Write(data)
-}
-
-func InitReiceved() {
-	JSONData := map[string]interface{}{
-		"API":  "InitReiceved",
-		"Data": true,
+	for WaitingForResponse {
 	}
-	data, _ := json.Marshal(JSONData)
-	Conn.Write(data)
+	return
 }
 
 func UpdateMap(data interface{}) [][]int {
@@ -51,6 +48,41 @@ func SendPos(x, y int) {
 	JSONData := map[string]interface{}{
 		"API":  "SendPos",
 		"Data": map[string]int{"X": x, "Y": y},
+	}
+	data, _ := json.Marshal(JSONData)
+	WaitingForResponse = true
+	Conn.Write(data)
+	for WaitingForResponse {
+	}
+	return
+}
+
+func waitForResponse() {
+	buffer := make([]byte, 1024)
+	// Handle client connection in a goroutine
+	bytesRead, err := Conn.Read(buffer)
+	if err != nil {
+		fmt.Println("Error1:", err)
+		return
+	}
+	if bytesRead == 0 {
+		fmt.Println("Error2: connection perdus")
+		return
+	}
+	data := buffer[:bytesRead]
+	jsonData := map[string]interface{}{}
+	err = json.Unmarshal(data, &jsonData)
+	if err != nil {
+		fmt.Println("Error3:", err)
+		return
+	}
+	WaitingForResponse = false
+	return
+}
+
+func datatReceived() {
+	JSONData := map[string]interface{}{
+		"API": "DataReceived",
 	}
 	data, _ := json.Marshal(JSONData)
 	Conn.Write(data)

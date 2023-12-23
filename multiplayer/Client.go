@@ -44,7 +44,6 @@ func InitAsClient() {
 		jsonData := map[string]interface{}{}
 		err = json.Unmarshal(data, &jsonData)
 		if err != nil {
-			fmt.Println(string(data))
 			fmt.Println("Error3:", err)
 			return
 		}
@@ -52,12 +51,15 @@ func InitAsClient() {
 		case "SendMap":
 			Map = UpdateMap(jsonData["Data"])
 			MapReceived = true
-			InitReiceved()
+			datatReceived()
 		case "SendPos":
-			fmt.Println(jsonData)
 			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
+			datatReceived()
+		case "DataReceived":
+			WaitingForResponse = false
 		}
+
 		buffer = make([]byte, 1024)
 	}
 }

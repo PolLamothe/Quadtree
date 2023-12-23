@@ -38,7 +38,10 @@ func handleClient(conn net.Conn) {
 	}
 	fmt.Println("connection validated with "+conn.RemoteAddr().String(), "on port "+configuration.Global.ClientPort)
 	Conn = conn
-	SendMap()
+	go SendMap()
+	waitForResponse()
+	go SendPos(ServerPos["X"], ServerPos["Y"])
+	waitForResponse()
 	buffer := make([]byte, 1024)
 	for {
 		// Handle client connection in a goroutine
@@ -60,12 +63,12 @@ func handleClient(conn net.Conn) {
 			return
 		}
 		switch jsonData["API"] {
-		case "InitReiceved":
-			if jsonData["Data"].(bool) {
-				SendPos(ServerPos["X"], ServerPos["Y"])
-			} else {
-				conn.Close()
-			}
+		case "SendPos":
+			ClientPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
+			ClientPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
+			datatReceived()
+		case "DataReceived":
+			WaitingForResponse = false
 		}
 		buffer = make([]byte, 1024)
 	}

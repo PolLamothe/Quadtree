@@ -1,18 +1,17 @@
 package floor
 
 import (
-	"image"
-
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/assets"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
+	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Draw affiche dans une image (en général, celle qui représente l'écran),
 // la partie du sol qui est visible (qui doit avoir été calculée avec Get avant).
-func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCam, YCam, XCharacter, YCharacter int) {
+func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCharacter, YCharacter int, XCam, YCam float64) {
 	var futureX, futureY int = 0, 0
 	if XShift > 0 {
 		futureX = 1
@@ -24,62 +23,33 @@ func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCam, YCam, XCharacter
 	} else if YShift < 0 {
 		futureY = -1
 	}
-	if configuration.Global.CameraBlockEdge && !configuration.Global.GenerationInfinie && f.AllBlockDisplayed {
-		if !configuration.Global.CameraFluide {
-			if (f.X == configuration.Global.NumTileX/2 && XCharacter+futureX <= configuration.Global.NumTileX/2) || XCam != XCharacter || (f.X == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
-				XShift = 0
-			}
-			if (f.Y == configuration.Global.NumTileY/2 && YCharacter+futureY <= configuration.Global.NumTileY/2) || YCam != YCharacter || (f.Y == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
-				YShift = 0
-			}
-		} else {
-			if !configuration.Global.CameraBlockEdge {
-				if (f.X+1 == configuration.Global.NumTileX/2 && XCharacter+futureX <= configuration.Global.NumTileX/2) || XCam != XCharacter || (f.X+1 == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
-					XShift = 0
-				}
-				if (f.Y+1 == configuration.Global.NumTileY/2 && YCharacter+futureY <= configuration.Global.NumTileY/2) || YCam != YCharacter || (f.Y+1 == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
-					YShift = 0
-				}
-				if (f.X == configuration.Global.NumTileX/2 && XCharacter+futureX <= configuration.Global.NumTileX/2) || XCam != XCharacter || (f.X == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
-					XShift = 0
-				}
-				if (f.Y == configuration.Global.NumTileY/2 && YCharacter+futureY <= configuration.Global.NumTileY/2) || YCam != YCharacter || (f.Y == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
-					YShift = 0
-				}
-			} else {
-				var XFutureCharacter, YFutureCharacter int = XCharacter + futureX, YCharacter + futureY
-				if configuration.Global.NumTileX%2 != 0 {
-					XFutureCharacter++
-				}
-				if configuration.Global.NumTileY%2 != 0 {
-					YFutureCharacter++
-				}
-				var XFloor, YFloor int = f.X, f.Y
-				if configuration.Global.NumTileX%2 != 0 {
-					XFloor++
-				}
-				if configuration.Global.NumTileY%2 != 0 {
-					YFloor++
-				}
-				if (XFloor-1 == configuration.Global.NumTileX/2 && XFutureCharacter <= configuration.Global.NumTileX/2) || XCam != XCharacter || (XFloor == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
-					XShift = 0
-				}
-				if (YFloor-1 == configuration.Global.NumTileY/2 && YFutureCharacter <= configuration.Global.NumTileY/2) || YCam != YCharacter || (YFloor == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
-					YShift = 0
-				}
-				if (XFloor-1 == configuration.Global.NumTileX/2 && XFutureCharacter <= configuration.Global.NumTileX/2) || XCam != XCharacter || (XFloor == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
-					XShift = 0
-				}
-				if (YFloor-1 == configuration.Global.NumTileY/2 && YFutureCharacter <= configuration.Global.NumTileY/2) || YCam != YCharacter || (YFloor == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
-					YShift = 0
-				}
-			}
-		}
+	var XDiff, YDiff float64 = XCam - float64(int(XCam)), YCam - float64(int(YCam))
+	if futureX < 0 {
+		XDiff = 1 - XDiff - 1
+	}
+	if futureY < 0 {
+		YDiff = 1 - YDiff - 1
 	}
 	if !configuration.Global.CameraFluide {
 		YShift = 0
 		XShift = 0
+	} else {
+		XShift = int(XDiff*float64(configuration.Global.TileSize)) * futureX
+		YShift = int(YDiff*float64(configuration.Global.TileSize)) * futureY
 	}
+	if configuration.Global.CameraBlockEdge && !configuration.Global.GenerationInfinie && f.AllBlockDisplayed {
+		if !configuration.Global.CameraFluide {
+			if (f.X == configuration.Global.NumTileX/2 && XCharacter+futureX <= configuration.Global.NumTileX/2) || int(XCam) != XCharacter || (f.X == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
+				XShift = 0
+			}
+			if (f.Y == configuration.Global.NumTileY/2 && YCharacter+futureY <= configuration.Global.NumTileY/2) || int(YCam) != YCharacter || (f.Y == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
+				YShift = 0
+			}
+		} else {
+
+		}
+	}
+
 	for y := 0; y < len(f.Content); y++ {
 		for x := 0; x < len(f.Content[y]); x++ {
 			if f.Content[y][x] >= 0 && f.Content[y][x] <= 5 {
