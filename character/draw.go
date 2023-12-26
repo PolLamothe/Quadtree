@@ -1,10 +1,9 @@
 package character
 
 import (
-	"image"
-
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/assets"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -14,7 +13,7 @@ import (
 // fonction des charactéristiques du personnage (position, orientation,
 // étape d'animation, etc) et de la position de la caméra (le personnage
 // est affiché relativement à la caméra).
-func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, camY float64, allBlockDisplayed bool) {
+func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, camY float64, allBlockDisplayed bool, XShift, YShift int) {
 	xShift := 0
 	yShift := 0
 	var orientation string
@@ -54,21 +53,21 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 
 	xTileForDisplay := c.X - camX2 + configuration.Global.ScreenCenterTileX
 	yTileForDisplay := c.Y - camY2 + configuration.Global.ScreenCenterTileY
-	xPos := (xTileForDisplay)*configuration.Global.TileSize + xShift
-	yPos := (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
+	xPos := (xTileForDisplay)*configuration.Global.TileSize + XShift
+	yPos := (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + YShift
 
+	var futureX, futureY int = 0, 0
+	if xShift > 0 {
+		futureX = 1
+	} else if xShift < 0 {
+		futureX = -1
+	}
+	if yShift > 0 {
+		futureY = 1
+	} else if yShift < 0 {
+		futureY = -1
+	}
 	if configuration.Global.CameraFluide {
-		var futureX, futureY int = 0, 0
-		if xShift > 0 {
-			futureX = 1
-		} else if xShift < 0 {
-			futureX = -1
-		}
-		if yShift > 0 {
-			futureY = 1
-		} else if yShift < 0 {
-			futureY = -1
-		}
 		var camXExtern, camYExtern int = camX2, camY2
 		if configuration.Global.NumTileX%2 != 0 {
 			camXExtern++
@@ -110,15 +109,26 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 				yPos = yTileForDisplay*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
 			}
 		}
-		if configuration.Global.MultiplayerKind != 0 {
-			if configuration.Global.MultiplayerKind == c.CharacterNumber {
-				xPos = (xTileForDisplay) * configuration.Global.TileSize
-				yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+	}
+	if configuration.Global.MultiplayerKind != 0 && configuration.Global.MultiplayerKind != c.CharacterNumber {
+		if !configuration.Global.CameraFluide {
+			xPos = (xTileForDisplay) * configuration.Global.TileSize
+			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+		} else if configuration.Global.CameraFluide {
+			if XShift < 0 {
+				xTileForDisplay--
 			}
-		}
-		if false {
-			c.X = xPos
-			c.Y = yPos
+			if YShift < 0 {
+				yTileForDisplay--
+			}
+			if c.XShift < 0 {
+				xTileForDisplay++
+			}
+			if c.YShift < 0 {
+				yTileForDisplay++
+			}
+			xPos = (xTileForDisplay)*configuration.Global.TileSize - XShift + c.XShift
+			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 - YShift + c.YShift
 		}
 	}
 

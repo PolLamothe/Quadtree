@@ -16,7 +16,7 @@
     "SingleUsagePortal" : false,
     "CameraBlockEdge" : false,
     "CameraFluide" : true,
-    "GenerationInfinie" : true,
+    "GenerationInfinie" : false,
     "TerreRonde": false,
     "MultiplayerKind":0,
     "MultiplayerIP" : "localhost",

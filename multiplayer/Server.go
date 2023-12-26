@@ -67,6 +67,9 @@ func handleClient(conn net.Conn) {
 			ClientPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ClientPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
 			datatReceived()
+		case "SendKeyPressed":
+			KeyPressed = jsonData["Data"].(string)
+			datatReceived()
 		case "DataReceived":
 			WaitingForResponse = false
 		}

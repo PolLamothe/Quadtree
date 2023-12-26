@@ -12,6 +12,7 @@ var MapReceived bool = false
 var WaitingForResponse bool = false
 var ServerPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var ClientPos map[string]int = map[string]int{"X": 0, "Y": 0}
+var KeyPressed string = ""
 
 func SendMap() {
 	JSONData := map[string]interface{}{
@@ -48,6 +49,19 @@ func SendPos(x, y int) {
 	JSONData := map[string]interface{}{
 		"API":  "SendPos",
 		"Data": map[string]int{"X": x, "Y": y},
+	}
+	data, _ := json.Marshal(JSONData)
+	WaitingForResponse = true
+	Conn.Write(data)
+	for WaitingForResponse {
+	}
+	return
+}
+
+func SendKeyPressed(key string) {
+	JSONData := map[string]interface{}{
+		"API":  "SendKeyPressed",
+		"Data": key,
 	}
 	data, _ := json.Marshal(JSONData)
 	WaitingForResponse = true
