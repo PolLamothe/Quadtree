@@ -13,6 +13,7 @@ var WaitingForResponse bool = false
 var ServerPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var ClientPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var KeyPressed string = ""
+var MultiplayerPortal [][]int = [][]int{}
 
 func SendMap() {
 	JSONData := map[string]interface{}{

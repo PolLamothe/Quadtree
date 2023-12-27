@@ -8,13 +8,13 @@ import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/portal"
 )
 
-var PortalSecur bool = false //variable qui sert a temporiser le mouvement a la sortie d'un portail pour empecher le personnage d'aller sur une case -1
+//variable qui sert a temporiser le mouvement a la sortie d'un portail pour empecher le personnage d'aller sur une case -1
 
 // Update met à jour la position du personnage, son orientation
 // et son étape d'animation (si nécessaire) à chaque pas
 // de temps, c'est-à-dire tous les 1/60 secondes.
 func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
-	if !c.moving && !PortalSecur {
+	if !c.moving && !c.PortalSecure {
 		if (ebiten.IsKeyPressed(ebiten.KeyRight) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "right" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedRight
 			if !blocking[1] {
@@ -51,18 +51,26 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 					multiplayer.SendKeyPressed("down")
 				}
 			}
-		} else if ebiten.IsKeyPressed(ebiten.KeyTab) && !portal.IsPortalHere(c.X, c.Y) && configuration.Global.Portal {
+		} else if ebiten.IsKeyPressed(ebiten.KeyTab) && !portal.IsPortalHere(c.X, c.Y) && configuration.Global.Portal && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber) {
 			if len(portal.PortalStore) == 2 {
 				portal.PortalStore = portal.PortalStore[1:]
 			}
 			portal.PortalStore = append(portal.PortalStore, []int{c.X, c.Y})
+			if configuration.Global.MultiplayerKind != 0 {
+				multiplayer.SendKeyPressed("tab")
+			}
+		} else if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber != configuration.Global.MultiplayerKind && multiplayer.KeyPressed == "tab" {
+			if len(multiplayer.MultiplayerPortal) == 2 {
+				multiplayer.MultiplayerPortal = multiplayer.MultiplayerPortal[1:]
+			}
+			multiplayer.MultiplayerPortal = append(multiplayer.MultiplayerPortal, []int{c.X, c.Y})
 		}
 		if configuration.Global.MultiplayerKind != c.CharacterNumber {
 			multiplayer.KeyPressed = ""
 		}
 	} else {
 		c.animationFrameCount++
-		PortalSecur = false
+		c.PortalSecure = false
 		if c.animationFrameCount >= configuration.Global.NumFramePerCharacterAnimImage {
 			c.animationFrameCount = 0
 			shiftStep := configuration.Global.TileSize / configuration.Global.NumCharacterAnimImages
@@ -95,28 +103,36 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 						c.Y = c.Y % f.QuadtreeContent.Height
 					}
 				}
-				if portal.IsPortalHere(c.X, c.Y) && len(portal.PortalStore) == 2 {
-					var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
-					c.X = newCoord[0]
-					c.Y = newCoord[1]
-					f.AllBlockDisplayed = false
-					c.xInc, c.yInc = 0, 0
-					if configuration.Global.SingleUsagePortal {
-						portal.PortalStore = [][]int{}
+				if portal.IsPortalHere(c.X, c.Y) {
+					if portal.IsInLocalPortalStore(c.X, c.Y) {
+						if len(portal.PortalStore) == 2 {
+							var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
+							c.X = newCoord[0]
+							c.Y = newCoord[1]
+							f.AllBlockDisplayed = false
+							c.xInc, c.yInc = 0, 0
+							if configuration.Global.SingleUsagePortal {
+								portal.PortalStore = [][]int{}
+							}
+							c.PortalSecure = true
+							c.Update(blocking, f)
+						}
+					} else {
+						if len(multiplayer.MultiplayerPortal) == 2 {
+							var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
+							c.X = newCoord[0]
+							c.Y = newCoord[1]
+							f.AllBlockDisplayed = false
+							c.xInc, c.yInc = 0, 0
+							if configuration.Global.SingleUsagePortal {
+								multiplayer.MultiplayerPortal = [][]int{}
+							}
+							c.PortalSecure = true
+							c.Update(blocking, f)
+						}
 					}
-					PortalSecur = true
-					c.Update(blocking, f)
 				}
 			}
 		}
-	}
-
-	if c.CharacterNumber == 1 && configuration.Global.MultiplayerKind == 2 {
-		c.X = multiplayer.ServerPos["X"]
-		c.Y = multiplayer.ServerPos["Y"]
-	}
-	if c.CharacterNumber == 2 && configuration.Global.MultiplayerKind == 1 {
-		c.X = multiplayer.ClientPos["X"]
-		c.Y = multiplayer.ClientPos["Y"]
 	}
 }

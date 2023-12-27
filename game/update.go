@@ -4,7 +4,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
-	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 )
 
 // Update met à jour les données du jeu à chaque 1/60 de seconde.
@@ -16,14 +15,6 @@ func (g *Game) Update() error {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		configuration.Global.DebugMode = !configuration.Global.DebugMode
-	}
-	if configuration.Global.MultiplayerKind == 1 {
-		g.Character2.X = multiplayer.ClientPos["X"]
-		g.Character2.Y = multiplayer.ClientPos["Y"]
-	}
-	if configuration.Global.MultiplayerKind == 2 {
-		g.Character.X = multiplayer.ServerPos["X"]
-		g.Character.Y = multiplayer.ServerPos["Y"]
 	}
 	g.Character.Update(g.floor.Blocking(g.Character.X, g.Character.Y, int(g.camera.X), int(g.camera.Y)), &(g.floor))
 	g.Character2.Update(g.floor.Blocking(g.Character2.X, g.Character2.Y, int(g.camera.X), int(g.camera.Y)), &(g.floor))
