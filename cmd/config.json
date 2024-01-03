@@ -1,7 +1,7 @@
 {
     "DebugMode": false,
-    "NumTileX": 7,
-    "NumTileY": 7,
+    "NumTileX": 5,
+    "NumTileY": 5,
     "TileSize": 16,
     "NumCharacterAnimImages": 5,
     "NumFramePerCharacterAnimImage": 5,
@@ -14,7 +14,7 @@
     "RandomTileY" : 8,
     "Portal":true,
     "SingleUsagePortal" : false,
-    "CameraBlockEdge" : false,
+    "CameraBlockEdge" : true,
     "CameraFluide" : true,
     "GenerationInfinie" : false,
     "TerreRonde": false,

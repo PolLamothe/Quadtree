@@ -45,8 +45,6 @@ func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCharacter, YCharacter
 			if (f.Y == configuration.Global.NumTileY/2 && YCharacter+futureY <= configuration.Global.NumTileY/2) || int(YCam) != YCharacter || (f.Y == f.QuadtreeContent.Height-configuration.Global.NumTileY/2 && YCharacter+futureY >= f.QuadtreeContent.Height-configuration.Global.NumTileY/2) {
 				YShift = 0
 			}
-		} else {
-
 		}
 	}
 

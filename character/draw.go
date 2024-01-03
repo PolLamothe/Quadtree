@@ -67,7 +67,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 	} else if yShift < 0 {
 		futureY = -1
 	}
-	if configuration.Global.CameraFluide {
+	if configuration.Global.CameraFluide && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber) {
 		var camXExtern, camYExtern int = camX2, camY2
 		if configuration.Global.NumTileX%2 != 0 {
 			camXExtern++
@@ -80,6 +80,16 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + yShift
 		} else {
 			if configuration.Global.CameraBlockEdge {
+				if configuration.Global.NumTileX > MapWidth {
+					if xShift < 0 {
+						xTileForDisplay--
+					}
+				}
+				if configuration.Global.NumTileY > MapHeight {
+					if yShift < 0 {
+						yTileForDisplay--
+					}
+				}
 				if camX2 == c.X {
 					xPos = ((configuration.Global.ScreenCenterTileX) * configuration.Global.TileSize)
 				} else {
@@ -111,24 +121,31 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 		}
 	}
 	if configuration.Global.MultiplayerKind != 0 && configuration.Global.MultiplayerKind != c.CharacterNumber {
+		var XDiff, YDiff float64 = camX - float64(int(camX)), camY - float64(int(camY))
+		if xShift < 0 {
+			XDiff = 1 - XDiff
+		}
+		if yShift < 0 {
+			YDiff = 1 - YDiff
+		}
 		if !configuration.Global.CameraFluide {
 			xPos = (xTileForDisplay) * configuration.Global.TileSize
 			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
-		} else if configuration.Global.CameraFluide {
-			if XShift < 0 {
-				xTileForDisplay--
-			}
-			if YShift < 0 {
-				yTileForDisplay--
-			}
+		} else {
 			if c.XShift < 0 {
-				xTileForDisplay++
+				xTileForDisplay += 2
+				if configuration.Global.CameraBlockEdge && ((c.X+c.xInc != int(camX) || c.orientation != orientedLeft) || MapWidth < configuration.Global.NumTileX) {
+					xTileForDisplay--
+				}
 			}
 			if c.YShift < 0 {
-				yTileForDisplay++
+				yTileForDisplay += 2
+				if configuration.Global.CameraBlockEdge && ((c.Y+c.yInc != int(camY) || c.orientation != orientedUp) || MapHeight < configuration.Global.NumTileY) {
+					yTileForDisplay--
+				}
 			}
-			xPos = (xTileForDisplay)*configuration.Global.TileSize - XShift + c.XShift
-			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 - YShift + c.YShift
+			xPos = (xTileForDisplay)*configuration.Global.TileSize - int(XDiff*float64(configuration.Global.TileSize)) + c.XShift
+			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 - int(YDiff*float64(configuration.Global.TileSize)) + c.YShift
 		}
 	}
 

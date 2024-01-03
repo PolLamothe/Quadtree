@@ -109,7 +109,6 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 							var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
 							c.X = newCoord[0]
 							c.Y = newCoord[1]
-							f.AllBlockDisplayed = false
 							c.xInc, c.yInc = 0, 0
 							if configuration.Global.SingleUsagePortal {
 								portal.PortalStore = [][]int{}
@@ -122,7 +121,6 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 							var newCoord []int = portal.GetOtherCoordonate(c.X, c.Y)
 							c.X = newCoord[0]
 							c.Y = newCoord[1]
-							f.AllBlockDisplayed = false
 							c.xInc, c.yInc = 0, 0
 							if configuration.Global.SingleUsagePortal {
 								multiplayer.MultiplayerPortal = [][]int{}
