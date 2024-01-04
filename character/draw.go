@@ -134,13 +134,13 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 		} else {
 			if c.XShift < 0 {
 				xTileForDisplay += 2
-				if configuration.Global.CameraBlockEdge && ((c.X+c.xInc != int(camX) || c.orientation != orientedLeft) || MapWidth < configuration.Global.NumTileX) {
+				if configuration.Global.CameraBlockEdge && ((c.X+c.xInc != int(camX) || c.orientation != orientedLeft || c.X == MapWidth-2) || MapWidth < configuration.Global.NumTileX) {
 					xTileForDisplay--
 				}
 			}
 			if c.YShift < 0 {
 				yTileForDisplay += 2
-				if configuration.Global.CameraBlockEdge && ((c.Y+c.yInc != int(camY) || c.orientation != orientedUp) || MapHeight < configuration.Global.NumTileY) {
+				if configuration.Global.CameraBlockEdge && ((c.Y+c.yInc != int(camY) || c.orientation != orientedUp || c.Y == MapHeight-2) || MapHeight < configuration.Global.NumTileY) {
 					yTileForDisplay--
 				}
 			}
