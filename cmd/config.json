@@ -1,7 +1,7 @@
 {
     "DebugMode": false,
-    "NumTileX": 5,
-    "NumTileY": 5,
+    "NumTileX": 6,
+    "NumTileY": 6,
     "TileSize": 16,
     "NumCharacterAnimImages": 5,
     "NumFramePerCharacterAnimImage": 5,
