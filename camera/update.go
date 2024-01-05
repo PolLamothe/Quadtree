@@ -5,7 +5,6 @@ import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/quadtree"
-	"math"
 )
 
 // Update met à jour la position de la caméra à chaque pas
@@ -33,10 +32,21 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 	MapHeight = q.Height
 	MapWidth = q.Width
 	if configuration.Global.CameraBlockEdge && !configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {
-		if MapWidth >= configuration.Global.NumTileX && MapHeight >= configuration.Global.NumTileY && characterPosX < configuration.Global.NumTileX/2 && characterPosY < configuration.Global.NumTileY/2 {
-			c.X = float64(configuration.Global.NumTileX / 2)
-			c.Y = float64(configuration.Global.NumTileY / 2)
-			(*f).AllBlockDisplayed = true
+		if MapWidth >= configuration.Global.NumTileX {
+			if characterPosX-configuration.Global.NumTileX/2 < 0 {
+				c.X = float64(configuration.Global.NumTileX / 2)
+			}
+			if characterPosX+configuration.Global.NumTileX/2 >= MapWidth {
+				c.X = float64(MapWidth-configuration.Global.NumTileX/2) - 1
+			}
+		}
+		if MapHeight >= configuration.Global.NumTileY {
+			if characterPosY-configuration.Global.NumTileY/2 < 0 {
+				c.Y = float64(configuration.Global.NumTileY / 2)
+			}
+			if characterPosY+configuration.Global.NumTileY/2 >= MapHeight {
+				c.Y = float64(MapHeight-configuration.Global.NumTileY/2) - 1
+			}
 		}
 	}
 	var XDir, YDir int = 0, 0
@@ -60,32 +70,31 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 		YDir--
 	}
 
-	if configuration.Global.CameraBlockEdge && (*f).AllBlockDisplayed && !configuration.Global.GenerationInfinie {
-		var cameraX, cameraY int = int(c.X), int(c.Y)
-		if configuration.Global.CameraFluide {
-			if XDir == -1 && (c.X)-math.Floor(c.X) != 0 {
-				cameraX = int(c.X) + 1
+	if configuration.Global.CameraBlockEdge && MapWidth >= configuration.Global.NumTileX && MapHeight >= configuration.Global.NumTileY && !configuration.Global.GenerationInfinie {
+		if float64(characterPosX-configuration.Global.NumTileX/2)+(float64(XShift)/float64(configuration.Global.TileSize)) >= 0 && float64(characterPosX+configuration.Global.NumTileX/2)+(float64(XShift)/float64(configuration.Global.TileSize)) < float64(MapWidth) {
+			if XShift == 0 {
+				c.X = float64(characterPosX) + float64(XDir)
 			}
-			if YDir == -1 && (c.Y)-math.Floor(c.Y) != 0 {
-				cameraY = int(c.Y) + 1
+			if XDir < 0 {
+				XDir++
+			}
+			if configuration.Global.CameraFluide && float64(characterPosX+configuration.Global.NumTileX/2)+float64(XDir) < float64(MapWidth) && float64(characterPosX-configuration.Global.NumTileX/2)+float64(XDir) >= 0 {
+				c.X = float64(characterPosX) + float64(float64(XShift)/float64(configuration.Global.TileSize))
+			} else if configuration.Global.NumTileX%2 == 0 && XState {
+				c.X++
 			}
 		}
-		if (cameraX) == characterPosX || cameraY == characterPosY || (c.X)-math.Floor(c.X) != 0 || (c.Y)-math.Floor(c.Y) != 0 {
-			if cameraX-configuration.Global.NumTileX/2+XDir >= 0 && cameraX+configuration.Global.NumTileX/2+XDir < MapWidth && (cameraX == characterPosX || (c.X)-math.Floor(c.X) != 0) {
-				c.X = float64(characterPosX) + float64(XDir)
-				if configuration.Global.CameraFluide {
-					c.X = float64(characterPosX) + float64(float64(XShift)/float64(configuration.Global.TileSize))
-				} else if configuration.Global.NumTileX%2 == 0 && XState {
-					c.X++
-				}
-			}
-			if cameraY-configuration.Global.NumTileY/2+YDir >= 0 && cameraY+configuration.Global.NumTileY/2+YDir < MapHeight && (cameraY == characterPosY || (c.Y)-math.Floor(c.Y) != 0) {
+		if float64(characterPosY-configuration.Global.NumTileY/2)+(float64(YShift)/float64(configuration.Global.TileSize)) >= 0 && float64(characterPosY+configuration.Global.NumTileY/2)+(float64(YShift)/float64(configuration.Global.TileSize)) < float64(MapHeight) {
+			if YShift == 0 {
 				c.Y = float64(characterPosY) + float64(YDir)
-				if configuration.Global.CameraFluide {
-					c.Y = float64(characterPosY) + float64(float64(YShift)/float64(configuration.Global.TileSize))
-				} else if configuration.Global.NumTileY%2 == 0 && YState {
-					c.Y++
-				}
+			}
+			if YDir < 0 {
+				YDir++
+			}
+			if configuration.Global.CameraFluide && float64(characterPosY-configuration.Global.NumTileY/2)+float64(YDir) >= 0 && float64(characterPosY+configuration.Global.NumTileY/2)+float64(YDir) < float64(MapHeight) {
+				c.Y = float64(characterPosY) + float64(float64(YShift)/float64(configuration.Global.TileSize))
+			} else if configuration.Global.NumTileY%2 == 0 && YState {
+				c.Y++
 			}
 		}
 

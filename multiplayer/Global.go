@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-var Conn net.Conn
+var Conn net.Conn = nil
 var Map [][]int = [][]int{{}}
 var MapReceived bool = false
 var WaitingForResponse bool = false
@@ -16,16 +16,18 @@ var KeyPressed string = ""
 var MultiplayerPortal [][]int = [][]int{}
 
 func SendMap() {
-	JSONData := map[string]interface{}{
-		"API":  "SendMap",
-		"Data": Map,
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API":  "SendMap",
+			"Data": Map,
+		}
+		data, _ := json.Marshal(JSONData)
+		WaitingForResponse = true
+		Conn.Write(data)
+		for WaitingForResponse {
+		}
+		return
 	}
-	data, _ := json.Marshal(JSONData)
-	WaitingForResponse = true
-	Conn.Write(data)
-	for WaitingForResponse {
-	}
-	return
 }
 
 func UpdateMap(data interface{}) [][]int {
@@ -47,29 +49,33 @@ func convertInterFaceArrayToArrayArrayInt(array []interface{}) [][]int {
 }
 
 func SendPos(x, y int) {
-	JSONData := map[string]interface{}{
-		"API":  "SendPos",
-		"Data": map[string]int{"X": x, "Y": y},
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API":  "SendPos",
+			"Data": map[string]int{"X": x, "Y": y},
+		}
+		data, _ := json.Marshal(JSONData)
+		WaitingForResponse = true
+		Conn.Write(data)
+		for WaitingForResponse {
+		}
+		return
 	}
-	data, _ := json.Marshal(JSONData)
-	WaitingForResponse = true
-	Conn.Write(data)
-	for WaitingForResponse {
-	}
-	return
 }
 
 func SendKeyPressed(key string) {
-	JSONData := map[string]interface{}{
-		"API":  "SendKeyPressed",
-		"Data": key,
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API":  "SendKeyPressed",
+			"Data": key,
+		}
+		data, _ := json.Marshal(JSONData)
+		WaitingForResponse = true
+		Conn.Write(data)
+		for WaitingForResponse {
+		}
+		return
 	}
-	data, _ := json.Marshal(JSONData)
-	WaitingForResponse = true
-	Conn.Write(data)
-	for WaitingForResponse {
-	}
-	return
 }
 
 func waitForResponse() {
@@ -96,9 +102,11 @@ func waitForResponse() {
 }
 
 func datatReceived() {
-	JSONData := map[string]interface{}{
-		"API": "DataReceived",
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API": "DataReceived",
+		}
+		data, _ := json.Marshal(JSONData)
+		Conn.Write(data)
 	}
-	data, _ := json.Marshal(JSONData)
-	Conn.Write(data)
 }

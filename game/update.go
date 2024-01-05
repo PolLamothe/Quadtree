@@ -17,7 +17,9 @@ func (g *Game) Update() error {
 		configuration.Global.DebugMode = !configuration.Global.DebugMode
 	}
 	g.Character.Update(g.floor.Blocking(g.Character.X, g.Character.Y, int(g.camera.X), int(g.camera.Y)), &(g.floor))
-	g.Character2.Update(g.floor.Blocking(g.Character2.X, g.Character2.Y, int(g.camera.X), int(g.camera.Y)), &(g.floor))
+	if configuration.Global.MultiplayerKind != 0 {
+		g.Character2.Update(g.floor.Blocking(g.Character2.X, g.Character2.Y, int(g.camera.X), int(g.camera.Y)), &(g.floor))
+	}
 	g.Character.RefreshShift()
 	g.Character2.RefreshShift()
 	if configuration.Global.MultiplayerKind != 2 { // si on est pas en mode client la caméra suit le personnage 1

@@ -37,7 +37,7 @@ func (f Floor) Draw(screen *ebiten.Image, XShift, YShift, XCharacter, YCharacter
 		XShift = int(XDiff*float64(configuration.Global.TileSize)) * futureX
 		YShift = int(YDiff*float64(configuration.Global.TileSize)) * futureY
 	}
-	if configuration.Global.CameraBlockEdge && f.AllBlockDisplayed {
+	if configuration.Global.CameraBlockEdge && f.QuadtreeContent.Width >= configuration.Global.NumTileX && f.QuadtreeContent.Height >= configuration.Global.NumTileY {
 		if !configuration.Global.CameraFluide {
 			if (f.X == configuration.Global.NumTileX/2 && XCharacter+futureX <= configuration.Global.NumTileX/2) || int(XCam) != XCharacter || (f.X == f.QuadtreeContent.Width-configuration.Global.NumTileX/2 && XCharacter+futureX >= f.QuadtreeContent.Width-configuration.Global.NumTileX/2) {
 				XShift = 0

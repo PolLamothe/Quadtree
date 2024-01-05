@@ -13,12 +13,11 @@ import (
 //   - quadTreeContent : totalité du terrain sous forme de quadtree (utilisé
 //     avec le type d'affichage du terrain "quadtreeFloor")
 type Floor struct {
-	Content           [][]int
-	FullContent       [][]int
-	QuadtreeContent   quadtree.Quadtree
-	AllBlockDisplayed bool //variable utilisée pour le vérouillage de la camera au bord de la map
-	X, Y              int
-	XChange, YChange  int
+	Content          [][]int
+	FullContent      [][]int
+	QuadtreeContent  quadtree.Quadtree
+	X, Y             int
+	XChange, YChange int
 } //variable utilisée pour modifier la position du joueur lors de la génération au fur et a mesure
 
 // types d'affichage du terrain disponibles

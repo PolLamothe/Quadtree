@@ -25,14 +25,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.floor.Draw(screen, g.Character2.XShift, g.Character2.YShift, g.Character2.X, g.Character2.Y, g.camera.X, g.camera.Y)
 	}
 	if configuration.Global.MultiplayerKind == 0 {
-		g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.floor.AllBlockDisplayed, g.Character.XShift, g.Character.YShift)
+		g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character.XShift, g.Character.YShift)
 	} else {
 		if configuration.Global.MultiplayerKind == 1 {
-			g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.floor.AllBlockDisplayed, g.Character.XShift, g.Character.YShift)
-			g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.floor.AllBlockDisplayed, g.Character.XShift, g.Character.YShift)
+			g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character.XShift, g.Character.YShift)
+			g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character.XShift, g.Character.YShift)
 		} else {
-			g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.floor.AllBlockDisplayed, g.Character2.XShift, g.Character2.YShift)
-			g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.floor.AllBlockDisplayed, g.Character2.XShift, g.Character2.YShift)
+			g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character2.XShift, g.Character2.YShift)
+			g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character2.XShift, g.Character2.YShift)
 		}
 	}
 	if configuration.Global.DebugMode {

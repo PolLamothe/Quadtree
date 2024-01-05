@@ -12,7 +12,6 @@ import (
 
 // Init initialise les structures de données internes de f.
 func (f *Floor) Init() {
-	f.AllBlockDisplayed = false
 	f.Content = make([][]int, configuration.Global.NumTileY)
 	f.XChange, f.YChange = 0, 0
 	for y := 0; y < len(f.Content); y++ {
