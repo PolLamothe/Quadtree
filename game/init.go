@@ -27,8 +27,6 @@ func (g *Game) Init() {
 		g.floor.Init()
 		g.Character.CharacterNumber = 1
 		g.Character.Init()
-		g.Character2.CharacterNumber = 2
-		g.Character2.Init()
 	}
 	g.camera.Init()
 	if configuration.Global.MultiplayerKind == 2 {

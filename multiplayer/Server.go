@@ -36,7 +36,7 @@ func handleClient(conn net.Conn) {
 		fmt.Println("Error:", err)
 		return
 	}
-	fmt.Println("connection validated with "+conn.RemoteAddr().String(), "on port "+configuration.Global.ClientPort)
+	fmt.Println("connection validated with " + conn.RemoteAddr().String())
 	Conn = conn
 	go SendMap()
 	waitForResponse()
@@ -63,10 +63,6 @@ func handleClient(conn net.Conn) {
 			return
 		}
 		switch jsonData["API"] {
-		case "SendPos":
-			ClientPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
-			ClientPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
-			datatReceived()
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
 			datatReceived()

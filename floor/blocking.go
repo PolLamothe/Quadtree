@@ -2,6 +2,7 @@ package floor
 
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 )
 
 // Blocking retourne, étant donnée la position du personnage,
@@ -39,6 +40,12 @@ func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blo
 		blocking[1] = mapContent[relativeYPos][relativeXPos+1] == -1
 		blocking[2] = mapContent[relativeYPos+1][relativeXPos] == -1
 		blocking[3] = mapContent[relativeYPos][relativeXPos-1] == -1
+		if configuration.Global.MultiplayerColision {
+			blocking[0] = blocking[0] || (characterYPos-1 == multiplayer.ServerPos["Y"] && characterXPos == multiplayer.ServerPos["X"]) || (characterYPos-1 == multiplayer.ClientPos["Y"] && characterXPos == multiplayer.ClientPos["X"])
+			blocking[1] = blocking[1] || (characterYPos == multiplayer.ServerPos["Y"] && characterXPos+1 == multiplayer.ServerPos["X"]) || (characterYPos == multiplayer.ClientPos["Y"] && characterXPos+1 == multiplayer.ClientPos["X"])
+			blocking[2] = blocking[2] || (characterYPos+1 == multiplayer.ServerPos["Y"] && characterXPos == multiplayer.ServerPos["X"]) || (characterYPos+1 == multiplayer.ClientPos["Y"] && characterXPos == multiplayer.ClientPos["X"])
+			blocking[3] = blocking[3] || (characterYPos == multiplayer.ServerPos["Y"] && characterXPos-1 == multiplayer.ServerPos["X"]) || (characterYPos == multiplayer.ClientPos["Y"] && characterXPos-1 == multiplayer.ClientPos["X"])
+		}
 	}
 	return blocking
 }

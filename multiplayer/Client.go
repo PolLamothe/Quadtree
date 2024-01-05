@@ -50,11 +50,11 @@ func InitAsClient() {
 		switch jsonData["API"] {
 		case "SendMap":
 			Map = UpdateMap(jsonData["Data"])
-			MapReceived = true
 			datatReceived()
 		case "SendPos":
 			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
+			MapReceived = true
 			datatReceived()
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)

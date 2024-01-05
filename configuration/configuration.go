@@ -56,7 +56,7 @@ type Configuration struct {
 	MultiplayerKind               int
 	MultiplayerIP                 string
 	ServerPort                    string
-	ClientPort                    string
+	MultiplayerColision           bool
 
 	ScreenWidth, ScreenHeight            int `json:"-"`
 	ScreenCenterTileX, ScreenCenterTileY int `json:"-"`

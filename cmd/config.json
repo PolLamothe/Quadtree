@@ -14,12 +14,12 @@
     "RandomTileY" : 15,
     "Portal":true,
     "SingleUsagePortal" : false,
-    "CameraBlockEdge" : true,
+    "CameraBlockEdge" : false,
     "CameraFluide" : true,
     "GenerationInfinie" : false,
     "TerreRonde": false,
     "MultiplayerKind":0,
     "MultiplayerIP" : "localhost",
     "ServerPort" : "3333",
-    "ClientPort" : "3334"
+    "MultiplayerColision" : true
 }

@@ -20,36 +20,36 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 			if !blocking[1] {
 				c.xInc = 1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
-					multiplayer.SendKeyPressed("right")
-				}
+			}
+			if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				multiplayer.SendKeyPressed("right")
 			}
 		} else if (ebiten.IsKeyPressed(ebiten.KeyLeft) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "left" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedLeft
 			if !blocking[3] {
 				c.xInc = -1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
-					multiplayer.SendKeyPressed("left")
-				}
+			}
+			if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				multiplayer.SendKeyPressed("left")
 			}
 		} else if (ebiten.IsKeyPressed(ebiten.KeyUp) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "up" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedUp
 			if !blocking[0] {
 				c.yInc = -1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
-					multiplayer.SendKeyPressed("up")
-				}
+			}
+			if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				multiplayer.SendKeyPressed("up")
 			}
 		} else if (ebiten.IsKeyPressed(ebiten.KeyDown) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "down" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedDown
 			if !blocking[2] {
 				c.yInc = 1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
-					multiplayer.SendKeyPressed("down")
-				}
+			}
+			if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				multiplayer.SendKeyPressed("down")
 			}
 		} else if ebiten.IsKeyPressed(ebiten.KeyTab) && !portal.IsPortalHere(c.X, c.Y) && configuration.Global.Portal && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber) {
 			if len(portal.PortalStore) == 2 {
