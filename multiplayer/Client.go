@@ -27,7 +27,7 @@ func InitAsClient() {
 		os.Exit(1)
 	}
 	Conn = conn
-	fmt.Println("connection validated with "+conn.RemoteAddr().String(), "on port "+configuration.Global.ServerPort)
+	fmt.Println("connection validated with " + conn.RemoteAddr().String())
 	buffer := make([]byte, 1024)
 	for {
 		// Handle client connection in a goroutine
@@ -51,6 +51,7 @@ func InitAsClient() {
 		case "SendMap":
 			Map = UpdateMap(jsonData["Data"])
 			datatReceived()
+			fmt.Println("Map received")
 		case "SendPos":
 			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))

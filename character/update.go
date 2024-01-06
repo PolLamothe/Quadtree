@@ -14,6 +14,12 @@ import (
 // et son étape d'animation (si nécessaire) à chaque pas
 // de temps, c'est-à-dire tous les 1/60 secondes.
 func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
+	if c.CharacterNumber == 1 {
+		multiplayer.ServerPos = map[string]int{"X": c.X, "Y": c.Y}
+	}
+	if c.CharacterNumber == 2 {
+		multiplayer.ClientPos = map[string]int{"X": c.X, "Y": c.Y}
+	}
 	if !c.moving && !c.PortalSecure {
 		if (ebiten.IsKeyPressed(ebiten.KeyRight) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "right" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedRight
@@ -81,12 +87,6 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				c.moving = false
 				c.X += c.xInc
 				c.Y += c.yInc
-				if c.CharacterNumber == 1 {
-					multiplayer.ServerPos = map[string]int{"X": c.X, "Y": c.Y}
-				}
-				if c.CharacterNumber == 2 {
-					multiplayer.ClientPos = map[string]int{"X": c.X, "Y": c.Y}
-				}
 				c.xInc = 0
 				c.yInc = 0
 				if configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {

@@ -19,7 +19,7 @@
     "GenerationInfinie" : false,
     "TerreRonde": true,
     "MultiplayerKind":0,
-    "MultiplayerIP" : "localhost",
+    "MultiplayerIP" : "127.0.0.1",
     "ServerPort" : "3333",
     "MultiplayerColision" : true
 }

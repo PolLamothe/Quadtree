@@ -3,6 +3,7 @@ package multiplayer
 import (
 	"encoding/json"
 	"fmt"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"net"
 )
 
@@ -14,6 +15,21 @@ var ServerPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var ClientPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var KeyPressed string = ""
 var MultiplayerPortal [][]int = [][]int{}
+
+func IsThereAPlayer(x, y, mapWidth, mapHeight int) bool {
+	if !configuration.Global.TerreRonde {
+		return (x == ServerPos["X"] && y == ServerPos["Y"]) || (x == ClientPos["X"] && y == ClientPos["Y"])
+	} else {
+		negativeX, negativeY := x, y
+		if x < 0 {
+			negativeX = mapWidth + x
+		}
+		if y < 0 {
+			negativeY = mapHeight + y
+		}
+		return (x%mapWidth == ServerPos["X"] && y%mapHeight == ServerPos["Y"]) || (x%mapWidth == ClientPos["X"] && y%mapHeight == ClientPos["Y"]) || (negativeX == ServerPos["X"] && negativeY == ServerPos["Y"]) || (negativeX == ClientPos["X"] && negativeY == ClientPos["Y"])
+	}
+}
 
 func SendMap() {
 	if Conn != nil {

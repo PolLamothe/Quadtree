@@ -17,6 +17,7 @@ func ConnectAsServer() {
 	defer listener.Close()
 	fmt.Println("Listening on localhost:" + configuration.Global.ServerPort)
 	for {
+		fmt.Println("connection received")
 		// Accept incoming connections
 		conn, err := listener.Accept()
 		if err != nil {

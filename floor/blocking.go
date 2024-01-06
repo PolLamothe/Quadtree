@@ -41,10 +41,10 @@ func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blo
 		blocking[2] = mapContent[relativeYPos+1][relativeXPos] == -1
 		blocking[3] = mapContent[relativeYPos][relativeXPos-1] == -1
 		if configuration.Global.MultiplayerColision {
-			blocking[0] = blocking[0] || (characterYPos-1 == multiplayer.ServerPos["Y"] && characterXPos == multiplayer.ServerPos["X"]) || (characterYPos-1 == multiplayer.ClientPos["Y"] && characterXPos == multiplayer.ClientPos["X"])
-			blocking[1] = blocking[1] || (characterYPos == multiplayer.ServerPos["Y"] && characterXPos+1 == multiplayer.ServerPos["X"]) || (characterYPos == multiplayer.ClientPos["Y"] && characterXPos+1 == multiplayer.ClientPos["X"])
-			blocking[2] = blocking[2] || (characterYPos+1 == multiplayer.ServerPos["Y"] && characterXPos == multiplayer.ServerPos["X"]) || (characterYPos+1 == multiplayer.ClientPos["Y"] && characterXPos == multiplayer.ClientPos["X"])
-			blocking[3] = blocking[3] || (characterYPos == multiplayer.ServerPos["Y"] && characterXPos-1 == multiplayer.ServerPos["X"]) || (characterYPos == multiplayer.ClientPos["Y"] && characterXPos-1 == multiplayer.ClientPos["X"])
+			blocking[0] = blocking[0] || multiplayer.IsThereAPlayer(characterXPos, characterYPos-1, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+			blocking[1] = blocking[1] || multiplayer.IsThereAPlayer(characterXPos+1, characterYPos, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+			blocking[2] = blocking[2] || multiplayer.IsThereAPlayer(characterXPos, characterYPos+1, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+			blocking[3] = blocking[3] || multiplayer.IsThereAPlayer(characterXPos-1, characterYPos, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
 		}
 	}
 	return blocking
