@@ -9,6 +9,16 @@ import (
 // MakeFromArray construit un quadtree représentant un terrain
 // étant donné un tableau représentant ce terrain.
 
+func pop(slice []map[string]int, index int) []map[string]int {
+	var result []map[string]int
+	for i := 0; i < len(slice); i++ {
+		if i != index {
+			result = append(result, slice[i])
+		}
+	}
+	return result
+}
+
 func Recur(position string, flootContent [][]int, parent node, initTopLeftX, initTopLeftY int) node {
 	var laNode node
 	var parentWidth int = parent.width
@@ -63,7 +73,18 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 			if configuration.Global.GenerationInfinie && configuration.Global.MultiplayerKind != 0 {
 				for i := 0; i < laNode.width; i++ {
 					for x := 0; x < laNode.height; x++ {
-						multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
+						var state bool = false
+						for y := 0; y < len(multiplayer.BlockReceived); y++ { // on s'assure que le bloc n'a pas déja été reçu
+							if laNode.TopLeftX+i == multiplayer.BlockReceived[y]["X"] && laNode.TopLeftY+x == multiplayer.BlockReceived[y]["Y"] {
+								laNode.content = multiplayer.BlockReceived[y]["Value"]
+								multiplayer.BlockReceived = pop(multiplayer.BlockReceived, y)
+								state = true
+							}
+						}
+						if !state {
+							multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
+							multiplayer.SendBlock()
+						}
 					}
 				}
 			}

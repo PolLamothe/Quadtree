@@ -2,7 +2,6 @@ package quadtree
 
 import (
 	"fmt"
-	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 )
 
 /*
@@ -47,7 +46,4 @@ func (q *Quadtree) GenerateInfinite(postion string) {
 	(*q).Width *= 2
 	(*q).Height *= 2
 	(*q).Root = Root
-	if multiplayer.Conn != nil {
-		multiplayer.SendBlock()
-	}
 }

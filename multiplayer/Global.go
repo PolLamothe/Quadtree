@@ -49,8 +49,8 @@ func StopSendingBlock() {
 
 func SendBlock() {
 	if Conn != nil {
-		StartSendingBlock()
-		for len(BlockToSend) > 0 {
+		StartSendingBlock()        //On prévient l'autre que l'on va commencer a lui envoyer les blocs
+		for len(BlockToSend) > 0 { //tant qu'il reste des blocs a envoyer on va les envoyers par paquet de 10 (sinon il y'en a trop et la fonction unmarshall ne fonctionne pas)
 			var temp []map[string]int = []map[string]int{}
 			for x := 0; x < 10 && len(BlockToSend) > 0; x++ {
 				temp = append(temp, BlockToSend[0])
@@ -61,16 +61,12 @@ func SendBlock() {
 				"Data": temp,
 			}
 			data, _ := json.Marshal(JSONData)
-			fmt.Println(string(data))
 			WaitingForResponse = true
 			Conn.Write(data)
 			for WaitingForResponse {
 			}
 		}
-		for WaitingForResponse {
-
-		}
-		StopSendingBlock()
+		StopSendingBlock() //on prévient l'autre que l'on a fini d'envoyer les blocs
 		return
 	}
 }

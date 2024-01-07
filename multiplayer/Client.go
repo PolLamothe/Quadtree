@@ -28,7 +28,7 @@ func InitAsClient() {
 	}
 	Conn = conn
 	fmt.Println("connection validated with " + conn.RemoteAddr().String())
-	buffer := make([]byte, 16000)
+	buffer := make([]byte, 1024)
 	for {
 		// Handle client connection in a goroutine
 		bytesRead, err := conn.Read(buffer)
@@ -65,7 +65,6 @@ func InitAsClient() {
 			datatReceived()
 		case "StopSendingBlock":
 			ReceivingBlock = false
-			fmt.Println(BlockReceived)
 			datatReceived()
 		case "SendBlock":
 			temp := jsonData["Data"].([]interface{})
