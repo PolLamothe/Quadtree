@@ -2,11 +2,22 @@ package quadtree
 
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"math/rand"
 )
 
 // MakeFromArray construit un quadtree représentant un terrain
 // étant donné un tableau représentant ce terrain.
+
+func pop(slice []map[string]int, index int) []map[string]int {
+	var result []map[string]int
+	for i := 0; i < len(slice); i++ {
+		if i != index {
+			result = append(result, slice[i])
+		}
+	}
+	return result
+}
 
 func Recur(position string, flootContent [][]int, parent node, initTopLeftX, initTopLeftY int) node {
 	var laNode node
@@ -59,6 +70,20 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 			laNode.content = flootContent[laNode.TopLeftY][laNode.TopLeftX]
 		} else {
 			laNode.content = rand.Intn(5)
+			if configuration.Global.GenerationInfinie && configuration.Global.MultiplayerKind != 0 {
+				for i := 0; i < laNode.width; i++ {
+					for x := 0; x < laNode.height; x++ {
+						var state, value = multiplayer.IsThisBlockReceived(laNode.TopLeftX+i, laNode.TopLeftY+x)
+						if state {
+							laNode.content = value
+						} else {
+							laNode.content = rand.Intn(5)
+							multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
+							multiplayer.SendBlock()
+						}
+					}
+				}
+			}
 		}
 	} else if len(flootContent) > 0 {
 		var topLeftNode node = Recur("topLeft", flootContent, laNode, initTopLeftX, initTopLeftY)

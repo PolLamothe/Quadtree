@@ -14,7 +14,8 @@ import (
 //   - floor : la représentation du terrain
 //   - Character : la représentation du personnage
 type Game struct {
-	camera    camera.Camera
-	floor     floor.Floor
-	Character character.Character
+	camera     camera.Camera
+	floor      floor.Floor
+	Character  character.Character
+	Character2 character.Character
 }

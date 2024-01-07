@@ -16,7 +16,7 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 			return -1
 		}
 	}
-	if configuration.Global.TerreRonde && !configuration.Global.GenerationInfinie {
+	if configuration.Global.TerreRonde {
 		if indexX < 0 || indexY < 0 || indexX >= width || indexY >= height {
 			if indexY < 0 {
 				indexY = (height - (-(indexY))%height)

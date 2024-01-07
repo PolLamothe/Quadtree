@@ -8,7 +8,7 @@ import "gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
 // se trouve mais vous pourrez ajouter des choses
 // au besoin lors de votre développement.
 type Camera struct {
-	X, Y int
+	X, Y float64
 	f    floor.Floor
 }
 

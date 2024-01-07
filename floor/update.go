@@ -11,16 +11,16 @@ import (
 //
 // On aurait pu se passer de cette fonction et tout faire dans Draw.
 // Mais cela permet de découpler le calcul de l'affichage.
-func (f *Floor) Update(camXPos, camYPos *int) {
-	f.X = *camXPos
-	f.Y = *camYPos
+func (f *Floor) Update(camXPos, camYPos, XShift, YShift int) {
+	f.X = camXPos
+	f.Y = camYPos
 	switch configuration.Global.FloorKind {
 	case gridFloor:
-		f.updateGridFloor(*camXPos, *camYPos)
+		f.updateGridFloor(camXPos, camYPos)
 	case fromFileFloor:
-		f.updateFromFileFloor(*camXPos, *camYPos)
+		f.updateFromFileFloor(camXPos, camYPos)
 	case quadTreeFloor:
-		f.updateQuadtreeFloor(camXPos, camYPos)
+		f.updateQuadtreeFloor(camXPos, camYPos, XShift, YShift)
 	}
 }
 
@@ -103,34 +103,50 @@ func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 }
 
 // le sol est récupéré depuis un quadtree, qui a été lu dans un fichier
-func (f *Floor) updateQuadtreeFloor(camXPos, camYPos *int) {
-	topLeftX := *camXPos - configuration.Global.ScreenCenterTileX
-	topLeftY := *camYPos - configuration.Global.ScreenCenterTileY
+func (f *Floor) updateQuadtreeFloor(camXPos, camYPos, XShift, YShift int) {
+	topLeftX := camXPos - configuration.Global.ScreenCenterTileX
+	topLeftY := camYPos - configuration.Global.ScreenCenterTileY
 	if configuration.Global.GenerationInfinie { //si la génération infinie est activé on détecte si le joueur demande a charger des terrains pas enore généré, et si oui, on les génère et on detecte quelle node devra être le terrain actuelle
 		// (ex: si le joueur demande a générer du terrain citué a gauche, on va cituer le terrain actuelle a droite, et on va générer le terrain demandé a gauche)
+		if configuration.Global.CameraFluide {
+			if XShift < 0 {
+				topLeftX--
+			}
+			if YShift < 0 {
+				topLeftY--
+			}
+		}
 		if topLeftX < f.QuadtreeContent.Root.TopLeftX { //si le joueur demande a charger du terrain a gauche
-			if *camYPos <= 0 { //droite-Haut
+			if camYPos <= 0 { //droite-Haut
 				f.QuadtreeContent.GenerateInfinite("TopRight")
 			} else { //droite-bas
 				f.QuadtreeContent.GenerateInfinite("BottomRight")
 			}
 		} else if topLeftY < f.QuadtreeContent.Root.TopLeftY { //si le joueur demande a charger du terrain en haut
-			if *camXPos > 0 { //bas-Gauche
+			if camXPos > 0 { //bas-Gauche
 				f.QuadtreeContent.GenerateInfinite("BottomLeft")
 			} else { //bas-Droite
 				f.QuadtreeContent.GenerateInfinite("BottomRight")
 			}
 		} else if topLeftX+configuration.Global.NumTileX >= f.QuadtreeContent.Width/2 { //si le joueur demande a charger du terrain a droite
-			if *camYPos >= 0 { //haut-gauche
+			if camYPos >= 0 { //haut-gauche
 				f.QuadtreeContent.GenerateInfinite("TopLeft")
 			} else { //Bas-Gauche
 				f.QuadtreeContent.GenerateInfinite("BottomLeft")
 			}
 		} else if topLeftY+configuration.Global.NumTileY >= f.QuadtreeContent.Height/2 { //si le joueur demande a charger du terrain en bas
-			if *camXPos >= 0 { //Haut-Gauche
+			if camXPos >= 0 { //Haut-Gauche
 				f.QuadtreeContent.GenerateInfinite("TopLeft")
 			} else { //haut-Droite
 				f.QuadtreeContent.GenerateInfinite("TopRight")
+			}
+		}
+		if configuration.Global.CameraFluide {
+			if XShift < 0 {
+				topLeftX++
+			}
+			if YShift < 0 {
+				topLeftY++
 			}
 		}
 	}

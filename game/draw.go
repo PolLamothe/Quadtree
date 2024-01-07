@@ -3,6 +3,7 @@ package game
 import "C"
 import (
 	"fmt"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"image/color"
 
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
@@ -18,8 +19,47 @@ import (
 // des éléments qui en cachent d'autres.
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.Character.RefreshShift()
-	g.floor.Draw(screen, int(float64(g.Character.XShift)*1.3), int(float64(g.Character.YShift)*1.3), g.camera.X, g.camera.Y, g.Character.X, g.Character.Y)
-	g.Character.Draw(screen, g.camera.X, g.camera.Y, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.floor.AllBlockDisplayed)
+	g.Character2.RefreshShift()
+	if configuration.Global.MultiplayerKind != 2 {
+		g.floor.Draw(screen, g.Character.XShift, g.Character.YShift, g.Character.X, g.Character.Y, g.camera.X, g.camera.Y)
+	} else {
+		g.floor.Draw(screen, g.Character2.XShift, g.Character2.YShift, g.Character2.X, g.Character2.Y, g.camera.X, g.camera.Y)
+	}
+	if configuration.Global.MultiplayerKind == 0 {
+		g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character.XShift, g.Character.YShift)
+	} else {
+		if configuration.Global.MultiplayerKind == 1 {
+			g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character.XShift, g.Character.YShift)
+			if multiplayer.Conn != nil {
+				if !configuration.Global.TerreRonde {
+					g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X, g.camera.Y, g.Character.XShift, g.Character.YShift)
+				} else {
+					for i := -g.floor.QuadtreeContent.Height * (configuration.Global.NumTileY / g.floor.QuadtreeContent.Height); i <= configuration.Global.NumTileY+g.floor.QuadtreeContent.Height; i += g.floor.QuadtreeContent.Height {
+						for x := -g.floor.QuadtreeContent.Width * (configuration.Global.NumTileX / g.floor.QuadtreeContent.Width); x <= configuration.Global.NumTileX+g.floor.QuadtreeContent.Width; x += g.floor.QuadtreeContent.Width {
+							g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x-g.floor.QuadtreeContent.Width), g.camera.Y+float64(i-g.floor.QuadtreeContent.Height), g.Character.XShift, g.Character.YShift)
+							g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x-g.floor.QuadtreeContent.Width), g.camera.Y+float64(i), g.Character.XShift, g.Character.YShift)
+							g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x), g.camera.Y+float64(i-g.floor.QuadtreeContent.Height), g.Character.XShift, g.Character.YShift)
+							g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x), g.camera.Y+float64(i), g.Character.XShift, g.Character.YShift)
+						}
+					}
+				}
+			}
+		} else {
+			if !configuration.Global.TerreRonde {
+				g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character2.XShift, g.Character2.YShift)
+			} else {
+				for i := -g.floor.QuadtreeContent.Height * (configuration.Global.NumTileY / g.floor.QuadtreeContent.Height); i <= configuration.Global.NumTileY+g.floor.QuadtreeContent.Height; i += g.floor.QuadtreeContent.Height {
+					for x := -g.floor.QuadtreeContent.Width * (configuration.Global.NumTileX / g.floor.QuadtreeContent.Width); x <= configuration.Global.NumTileX+g.floor.QuadtreeContent.Width; x += g.floor.QuadtreeContent.Width {
+						g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x-g.floor.QuadtreeContent.Width), g.camera.Y+float64(i-g.floor.QuadtreeContent.Height), g.Character.XShift, g.Character.YShift)
+						g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x-g.floor.QuadtreeContent.Width), g.camera.Y+float64(i), g.Character.XShift, g.Character.YShift)
+						g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x), g.camera.Y+float64(i-g.floor.QuadtreeContent.Height), g.Character.XShift, g.Character.YShift)
+						g.Character.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, g.camera.X+float64(x), g.camera.Y+float64(i), g.Character.XShift, g.Character.YShift)
+					}
+				}
+			}
+			g.Character2.Draw(screen, g.floor.QuadtreeContent.Width, g.floor.QuadtreeContent.Height, (g.camera.X), (g.camera.Y), g.Character2.XShift, g.Character2.YShift)
+		}
+	}
 	if configuration.Global.DebugMode {
 		g.drawDebug(screen)
 	}
@@ -51,7 +91,7 @@ func (g Game) drawDebug(screen *ebiten.Image) {
 
 		vector.StrokeLine(screen, xPos, 0, xPos, float32(yMaxPos), float32(gridLineSize), lineColor, false)
 
-		xPrintValue := g.camera.X + x - configuration.Global.ScreenCenterTileX
+		xPrintValue := int(g.camera.X) + x - configuration.Global.ScreenCenterTileX
 		xPrint := fmt.Sprint(xPrintValue)
 		if len(xPrint) <= (2*configuration.Global.TileSize)/16 || (xPrintValue > 0 && xPrintValue%2 == 0) || (xPrintValue < 0 && (-xPrintValue)%2 == 0) {
 			xTextPos := xGeneralPos - 3*len(xPrint) - 1
@@ -70,7 +110,7 @@ func (g Game) drawDebug(screen *ebiten.Image) {
 
 		vector.StrokeLine(screen, 0, yPos, float32(xMaxPos), yPos, float32(gridLineSize), lineColor, false)
 
-		yPrint := fmt.Sprint(g.camera.Y + y - configuration.Global.ScreenCenterTileY)
+		yPrint := fmt.Sprint(int(g.camera.Y) + y - configuration.Global.ScreenCenterTileY)
 		xTextPos := xMaxPos + 1
 		yTextPos := yGeneralPos - 8
 		ebitenutil.DebugPrintAt(screen, yPrint, xTextPos, yTextPos)

@@ -2,6 +2,7 @@ package floor
 
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 )
 
 // Blocking retourne, étant donnée la position du personnage,
@@ -10,21 +11,41 @@ import (
 // sont bloquantes.
 func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blocking [4]bool) {
 	var relativeXPos, relativeYPos int
-	if configuration.Global.CameraFluide {
-		relativeXPos = (characterXPos - camXPos) + configuration.Global.ScreenCenterTileX + 1
-		relativeYPos = (characterYPos - camYPos) + configuration.Global.ScreenCenterTileY + 1
-		blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1
-		blocking[1] = relativeXPos-1 >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
-		blocking[2] = relativeYPos-1 >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
-		blocking[3] = relativeXPos <= 0 || f.Content[relativeYPos][relativeXPos-1] == -1
+	if configuration.Global.MultiplayerKind == 0 || multiplayer.Conn == nil {
+		if configuration.Global.CameraFluide {
+			relativeXPos = (characterXPos - camXPos) + configuration.Global.ScreenCenterTileX + 1
+			relativeYPos = (characterYPos - camYPos) + configuration.Global.ScreenCenterTileY + 1
+			blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1
+			blocking[1] = relativeXPos-1 >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
+			blocking[2] = relativeYPos-1 >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
+			blocking[3] = relativeXPos <= 0 || f.Content[relativeYPos][relativeXPos-1] == -1
+		} else {
+			relativeXPos = characterXPos - camXPos + configuration.Global.ScreenCenterTileX
+			relativeYPos = characterYPos - camYPos + configuration.Global.ScreenCenterTileY
+			blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1
+			blocking[1] = relativeXPos >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
+			blocking[2] = relativeYPos >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
+			blocking[3] = relativeXPos <= 0 || f.Content[relativeYPos][relativeXPos-1] == -1
+		}
 	} else {
-		relativeXPos = characterXPos - camXPos + configuration.Global.ScreenCenterTileX
-		relativeYPos = characterYPos - camYPos + configuration.Global.ScreenCenterTileY
-		blocking[0] = relativeYPos <= 0 || f.Content[relativeYPos-1][relativeXPos] == -1
-		blocking[1] = relativeXPos >= configuration.Global.NumTileX-1 || f.Content[relativeYPos][relativeXPos+1] == -1
-		blocking[2] = relativeYPos >= configuration.Global.NumTileY-1 || f.Content[relativeYPos+1][relativeXPos] == -1
-		blocking[3] = relativeXPos <= 0 || f.Content[relativeYPos][relativeXPos-1] == -1
+		var topLeftY, topLeftX int = characterYPos - configuration.Global.NumTileY/2, characterXPos - configuration.Global.NumTileX/2
+		var mapContent [][]int = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
+		relativeXPos = configuration.Global.ScreenCenterTileX
+		relativeYPos = configuration.Global.ScreenCenterTileY
+		if configuration.Global.CameraFluide {
+			relativeXPos++
+			relativeYPos++
+		}
+		blocking[0] = mapContent[relativeYPos-1][relativeXPos] == -1
+		blocking[1] = mapContent[relativeYPos][relativeXPos+1] == -1
+		blocking[2] = mapContent[relativeYPos+1][relativeXPos] == -1
+		blocking[3] = mapContent[relativeYPos][relativeXPos-1] == -1
+		if configuration.Global.MultiplayerColision {
+			blocking[0] = blocking[0] || multiplayer.IsThereAPlayer(characterXPos, characterYPos-1, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+			blocking[1] = blocking[1] || multiplayer.IsThereAPlayer(characterXPos+1, characterYPos, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+			blocking[2] = blocking[2] || multiplayer.IsThereAPlayer(characterXPos, characterYPos+1, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+			blocking[3] = blocking[3] || multiplayer.IsThereAPlayer(characterXPos-1, characterYPos, f.QuadtreeContent.Width, f.QuadtreeContent.Height)
+		}
 	}
-
 	return blocking
 }
