@@ -1,10 +1,14 @@
 package multiplayer
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"log"
 	"net"
+	"os"
+	"path/filepath"
 )
 
 var Conn net.Conn = nil
@@ -16,7 +20,6 @@ var ClientPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var KeyPressed string = ""
 var MultiplayerPortal [][]int = [][]int{}
 var BlockToSend []map[string]int = []map[string]int{}
-var BlockReceived []map[string]int = []map[string]int{}
 var ReceivingBlock bool = false
 
 func StartSendingBlock() {
@@ -31,6 +34,104 @@ func StartSendingBlock() {
 		}
 		return
 	}
+}
+
+func IsThisBlockReceived(x, y int) (bool, int) {
+	//Ouverture du fichier
+	var path string
+	if configuration.Global.MultiplayerKind == 1 {
+		path = "../multiplayer/BlockGeneratedServer"
+	} else {
+		path = "../multiplayer/BlockGeneratedClient"
+	}
+	path, err := filepath.Abs(path)
+	if err != nil {
+		os.Exit(1)
+	}
+	myFile, err2 := os.Open(path)
+	if err2 != nil {
+		log.Print(err2)
+		os.Exit(1)
+	}
+	//Préparation de la lecture
+	var scanner *bufio.Scanner
+	scanner = bufio.NewScanner(myFile)
+	// Lecture des lignes du fichier
+	var tempFile, err4 = os.Create("../multiplayer/temp")
+	if err4 != nil {
+		log.Fatal(err4)
+		os.Exit(1)
+	}
+	defer tempFile.Close()
+	var found bool = false
+	var value int = 0
+	for scanner.Scan() {
+		var current string = scanner.Text()
+		var data map[string]int = map[string]int{}
+		err := json.Unmarshal([]byte(current), &data)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+		if data["X"] == x && data["Y"] == y {
+			found = true
+			value = data["Value"]
+		} else {
+			if _, err := tempFile.Write(append([]byte(current), '\n')); err != nil {
+				log.Println(err)
+				os.Exit(1)
+			}
+		}
+	}
+	if found {
+		os.RemoveAll(path)
+		var newPath string
+		if configuration.Global.MultiplayerKind == 1 {
+			newPath = "../multiplayer/BlockGeneratedServer"
+		} else {
+			newPath = "../multiplayer/BlockGeneratedClient"
+		}
+		os.Rename("../multiplayer/temp", newPath)
+	}
+	// Fermeture du fichier
+	err = myFile.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return found, value
+}
+
+func treatBlocReceived(jsonData map[string]interface{}) {
+	temp := jsonData["Data"].([]interface{})
+	var temp2 []map[string]int
+	for v := range temp {
+		temp3 := temp[v].(map[string]interface{})
+		var temp4 map[string]int = map[string]int{"X": int(temp3["X"].(float64)), "Y": int(temp3["Y"].(float64)), "Value": int(temp3["Value"].(float64))}
+		temp2 = append(temp2, temp4)
+		data, err := json.Marshal(temp4)
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+		data = append(data, []byte("\n")...)
+		var path string
+		if configuration.Global.MultiplayerKind == 2 {
+			path, _ = filepath.Abs("../multiplayer/BlockGeneratedClient")
+		} else {
+			path, _ = filepath.Abs("../multiplayer/BlockGeneratedServer")
+		}
+		f, err2 := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err2 != nil {
+			log.Print(err2)
+			os.Exit(1)
+		}
+		defer f.Close()
+		if _, err := f.Write(data); err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+	}
+	datatReceived()
 }
 
 func StopSendingBlock() {

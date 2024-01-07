@@ -4,6 +4,7 @@ import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -31,6 +32,11 @@ func (g *Game) Init() {
 	g.camera.Init()
 	if configuration.Global.MultiplayerKind == 2 {
 		go multiplayer.InitAsClient()
+		path, err := filepath.Abs("../multiplayer/BlockGeneratedClient")
+		if err != nil {
+			os.Exit(1)
+		}
+		os.Truncate(path, 0)
 		for {
 			if multiplayer.MapReceived {
 				g.floor.Init()
@@ -43,6 +49,11 @@ func (g *Game) Init() {
 		}
 	}
 	if configuration.Global.MultiplayerKind == 1 {
+		path, err := filepath.Abs("../multiplayer/BlockGeneratedServer")
+		if err != nil {
+			os.Exit(1)
+		}
+		os.Truncate(path, 0)
 		multiplayer.Map = g.floor.FullContent
 		go multiplayer.ConnectAsServer()
 	}

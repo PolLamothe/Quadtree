@@ -73,15 +73,11 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 			if configuration.Global.GenerationInfinie && configuration.Global.MultiplayerKind != 0 {
 				for i := 0; i < laNode.width; i++ {
 					for x := 0; x < laNode.height; x++ {
-						var state bool = false
-						for y := 0; y < len(multiplayer.BlockReceived); y++ { // on s'assure que le bloc n'a pas déja été reçu
-							if laNode.TopLeftX+i == multiplayer.BlockReceived[y]["X"] && laNode.TopLeftY+x == multiplayer.BlockReceived[y]["Y"] {
-								laNode.content = multiplayer.BlockReceived[y]["Value"]
-								multiplayer.BlockReceived = pop(multiplayer.BlockReceived, y)
-								state = true
-							}
-						}
-						if !state {
+						var state, value = multiplayer.IsThisBlockReceived(laNode.TopLeftX+i, laNode.TopLeftY+x)
+						if state {
+							laNode.content = value
+						} else {
+							laNode.content = rand.Intn(5)
 							multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
 							multiplayer.SendBlock()
 						}
