@@ -15,6 +15,65 @@ var ServerPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var ClientPos map[string]int = map[string]int{"X": 0, "Y": 0}
 var KeyPressed string = ""
 var MultiplayerPortal [][]int = [][]int{}
+var BlockToSend []map[string]int = []map[string]int{}
+var BlockReceived []map[string]int = []map[string]int{}
+var ReceivingBlock bool = false
+
+func StartSendingBlock() {
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API": "StartSendingBlock",
+		}
+		data, _ := json.Marshal(JSONData)
+		WaitingForResponse = true
+		Conn.Write(data)
+		for WaitingForResponse {
+		}
+		return
+	}
+}
+
+func StopSendingBlock() {
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API": "StopSendingBlock",
+		}
+		data, _ := json.Marshal(JSONData)
+		WaitingForResponse = true
+		Conn.Write(data)
+		for WaitingForResponse {
+		}
+		return
+	}
+}
+
+func SendBlock() {
+	if Conn != nil {
+		StartSendingBlock()
+		for len(BlockToSend) > 0 {
+			var temp []map[string]int = []map[string]int{}
+			for x := 0; x < 10 && len(BlockToSend) > 0; x++ {
+				temp = append(temp, BlockToSend[0])
+				BlockToSend = BlockToSend[1:]
+			}
+			JSONData := map[string]interface{}{
+				"API":  "SendBlock",
+				"Data": temp,
+			}
+			data, _ := json.Marshal(JSONData)
+			fmt.Println(string(data))
+			WaitingForResponse = true
+			Conn.Write(data)
+			for WaitingForResponse {
+			}
+		}
+		for WaitingForResponse {
+
+		}
+		StopSendingBlock()
+		return
+	}
+}
 
 func IsThereAPlayer(x, y, mapWidth, mapHeight int) bool {
 	if !configuration.Global.TerreRonde {

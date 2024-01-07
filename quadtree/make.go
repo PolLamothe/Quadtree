@@ -2,6 +2,7 @@ package quadtree
 
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"math/rand"
 )
 
@@ -59,6 +60,13 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 			laNode.content = flootContent[laNode.TopLeftY][laNode.TopLeftX]
 		} else {
 			laNode.content = rand.Intn(5)
+			if configuration.Global.GenerationInfinie && configuration.Global.MultiplayerKind != 0 {
+				for i := 0; i < laNode.width; i++ {
+					for x := 0; x < laNode.height; x++ {
+						multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
+					}
+				}
+			}
 		}
 	} else if len(flootContent) > 0 {
 		var topLeftNode node = Recur("topLeft", flootContent, laNode, initTopLeftX, initTopLeftY)

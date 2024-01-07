@@ -11,7 +11,7 @@ import (
 // sont bloquantes.
 func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blocking [4]bool) {
 	var relativeXPos, relativeYPos int
-	if configuration.Global.MultiplayerKind == 0 {
+	if configuration.Global.MultiplayerKind == 0 || multiplayer.Conn == nil {
 		if configuration.Global.CameraFluide {
 			relativeXPos = (characterXPos - camXPos) + configuration.Global.ScreenCenterTileX + 1
 			relativeYPos = (characterYPos - camYPos) + configuration.Global.ScreenCenterTileY + 1

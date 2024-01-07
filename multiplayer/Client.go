@@ -28,7 +28,7 @@ func InitAsClient() {
 	}
 	Conn = conn
 	fmt.Println("connection validated with " + conn.RemoteAddr().String())
-	buffer := make([]byte, 1024)
+	buffer := make([]byte, 16000)
 	for {
 		// Handle client connection in a goroutine
 		bytesRead, err := conn.Read(buffer)
@@ -59,6 +59,23 @@ func InitAsClient() {
 			datatReceived()
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
+			datatReceived()
+		case "StartSendingBlock":
+			ReceivingBlock = true
+			datatReceived()
+		case "StopSendingBlock":
+			ReceivingBlock = false
+			fmt.Println(BlockReceived)
+			datatReceived()
+		case "SendBlock":
+			temp := jsonData["Data"].([]interface{})
+			var temp2 []map[string]int
+			for v := range temp {
+				temp3 := temp[v].(map[string]interface{})
+				var temp4 map[string]int = map[string]int{"X": int(temp3["X"].(float64)), "Y": int(temp3["Y"].(float64)), "Value": int(temp3["Value"].(float64))}
+				temp2 = append(temp2, temp4)
+			}
+			BlockReceived = append(BlockReceived, temp2...)
 			datatReceived()
 		case "DataReceived":
 			WaitingForResponse = false

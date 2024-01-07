@@ -1,6 +1,9 @@
 package quadtree
 
-import "fmt"
+import (
+	"fmt"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
+)
 
 /*
 GenerateInfinite permet d'étendre le quadtree actuelle en placant la map actuelle dans un des coins du nouveau quadtree
@@ -44,4 +47,7 @@ func (q *Quadtree) GenerateInfinite(postion string) {
 	(*q).Width *= 2
 	(*q).Height *= 2
 	(*q).Root = Root
+	if multiplayer.Conn != nil {
+		multiplayer.SendBlock()
+	}
 }

@@ -43,6 +43,8 @@ func handleClient(conn net.Conn) {
 	waitForResponse()
 	go SendPos(ServerPos["X"], ServerPos["Y"])
 	waitForResponse()
+	go SendBlock()
+	waitForResponse()
 	buffer := make([]byte, 1024)
 	for {
 		// Handle client connection in a goroutine
@@ -66,6 +68,22 @@ func handleClient(conn net.Conn) {
 		switch jsonData["API"] {
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
+			datatReceived()
+		case "StartSendingBlock":
+			ReceivingBlock = true
+			datatReceived()
+		case "StopSendingBlock":
+			ReceivingBlock = false
+			datatReceived()
+		case "SendBlock":
+			temp := jsonData["Data"].([]interface{})
+			var temp2 []map[string]int
+			for v := range temp {
+				temp3 := temp[v].(map[string]interface{})
+				var temp4 map[string]int = map[string]int{"X": int(temp3["X"].(float64)), "Y": int(temp3["Y"].(float64)), "Value": int(temp3["Value"].(float64))}
+				temp2 = append(temp2, temp4)
+			}
+			BlockReceived = append(BlockReceived, temp2...)
 			datatReceived()
 		case "DataReceived":
 			WaitingForResponse = false
