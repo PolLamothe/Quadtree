@@ -68,13 +68,13 @@ func handleClient(conn net.Conn) {
 		switch jsonData["API"] {
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
-			datatReceived()
+			DatatReceived()
 		case "StartSendingBlock":
 			ReceivingBlock = true
-			datatReceived()
+			DatatReceived()
 		case "StopSendingBlock":
 			ReceivingBlock = false
-			datatReceived()
+			DatatReceived()
 		case "SendBlock":
 			treatBlocReceived(jsonData)
 		case "DataReceived":

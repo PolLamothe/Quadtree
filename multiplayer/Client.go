@@ -45,27 +45,28 @@ func InitAsClient() {
 		err = json.Unmarshal(data, &jsonData)
 		if err != nil {
 			fmt.Println("Error3:", err)
+			fmt.Println(string(data))
 			return
 		}
 		switch jsonData["API"] {
 		case "SendMap":
 			Map = UpdateMap(jsonData["Data"])
-			datatReceived()
+			DatatReceived()
 			fmt.Println("Map received")
 		case "SendPos":
 			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
 			MapReceived = true
-			datatReceived()
+			DatatReceived()
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
-			datatReceived()
+			DatatReceived()
 		case "StartSendingBlock":
 			ReceivingBlock = true
-			datatReceived()
+			DatatReceived()
 		case "StopSendingBlock":
 			ReceivingBlock = false
-			datatReceived()
+			DatatReceived()
 		case "SendBlock":
 			treatBlocReceived(jsonData)
 		case "DataReceived":

@@ -131,7 +131,7 @@ func treatBlocReceived(jsonData map[string]interface{}) {
 			os.Exit(1)
 		}
 	}
-	datatReceived()
+	DatatReceived()
 }
 
 func StopSendingBlock() {
@@ -273,7 +273,7 @@ func waitForResponse() {
 	return
 }
 
-func datatReceived() {
+func DatatReceived() {
 	if Conn != nil {
 		JSONData := map[string]interface{}{
 			"API": "DataReceived",
