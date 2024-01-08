@@ -41,10 +41,11 @@ func SendConfig() {
 			"Data": ConfigDATA,
 		}
 		data, _ := json.Marshal(JSONData)
-		Conn.Write(data)
 		WaitingForResponse = true
+		Conn.Write(data)
 		for WaitingForResponse {
 		}
+		return
 	}
 }
 
