@@ -9,7 +9,7 @@ import (
 
 func ConnectAsServer() {
 	// Listen for incoming connections
-	listener, err := net.Listen("tcp", "localhost:"+configuration.Global.ServerPort)
+	listener, err := net.Listen("tcp", ":"+configuration.Global.ServerPort)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
