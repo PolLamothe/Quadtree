@@ -22,6 +22,32 @@ var MultiplayerPortal [][]int = [][]int{}
 var BlockToSend []map[string]int = []map[string]int{}
 var ReceivingBlock bool = false
 
+func SendConfig() {
+	if Conn != nil {
+		ConfigDATA := map[string]interface{}{
+			"RandomGeneration":    configuration.Global.RandomGeneration,
+			"RandomTileX":         configuration.Global.RandomTileX,
+			"RandomTileY":         configuration.Global.RandomTileY,
+			"Portal":              configuration.Global.Portal,
+			"SingleUsagePortal":   configuration.Global.SingleUsagePortal,
+			"CameraBlockEdge":     configuration.Global.CameraBlockEdge,
+			"CameraFluide":        configuration.Global.CameraFluide,
+			"GenerationInfinie":   configuration.Global.GenerationInfinie,
+			"TerreRonde":          configuration.Global.TerreRonde,
+			"MultiplayerColision": configuration.Global.MultiplayerColision,
+		}
+		JSONData := map[string]interface{}{
+			"API":  "SendConfig",
+			"Data": ConfigDATA,
+		}
+		data, _ := json.Marshal(JSONData)
+		Conn.Write(data)
+		WaitingForResponse = true
+		for WaitingForResponse {
+		}
+	}
+}
+
 func StartSendingBlock() {
 	if Conn != nil {
 		JSONData := map[string]interface{}{
@@ -131,7 +157,7 @@ func treatBlocReceived(jsonData map[string]interface{}) {
 			os.Exit(1)
 		}
 	}
-	datatReceived()
+	DatatReceived()
 }
 
 func StopSendingBlock() {
@@ -273,7 +299,7 @@ func waitForResponse() {
 	return
 }
 
-func datatReceived() {
+func DatatReceived() {
 	if Conn != nil {
 		JSONData := map[string]interface{}{
 			"API": "DataReceived",

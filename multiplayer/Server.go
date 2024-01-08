@@ -9,7 +9,7 @@ import (
 
 func ConnectAsServer() {
 	// Listen for incoming connections
-	listener, err := net.Listen("tcp", "localhost:"+configuration.Global.ServerPort)
+	listener, err := net.Listen("tcp", ":"+configuration.Global.ServerPort)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -39,6 +39,8 @@ func handleClient(conn net.Conn) {
 	}
 	fmt.Println("connection validated with " + conn.RemoteAddr().String())
 	Conn = conn
+	go SendConfig()
+	waitForResponse()
 	go SendMap()
 	waitForResponse()
 	go SendPos(ServerPos["X"], ServerPos["Y"])
@@ -68,13 +70,13 @@ func handleClient(conn net.Conn) {
 		switch jsonData["API"] {
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
-			datatReceived()
+			DatatReceived()
 		case "StartSendingBlock":
 			ReceivingBlock = true
-			datatReceived()
+			DatatReceived()
 		case "StopSendingBlock":
 			ReceivingBlock = false
-			datatReceived()
+			DatatReceived()
 		case "SendBlock":
 			treatBlocReceived(jsonData)
 		case "DataReceived":

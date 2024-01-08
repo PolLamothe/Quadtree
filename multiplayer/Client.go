@@ -45,29 +45,43 @@ func InitAsClient() {
 		err = json.Unmarshal(data, &jsonData)
 		if err != nil {
 			fmt.Println("Error3:", err)
+			fmt.Println(string(data))
 			return
 		}
 		switch jsonData["API"] {
 		case "SendMap":
 			Map = UpdateMap(jsonData["Data"])
-			datatReceived()
+			DatatReceived()
 			fmt.Println("Map received")
 		case "SendPos":
 			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
 			MapReceived = true
-			datatReceived()
+			DatatReceived()
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
-			datatReceived()
+			DatatReceived()
 		case "StartSendingBlock":
 			ReceivingBlock = true
-			datatReceived()
+			DatatReceived()
 		case "StopSendingBlock":
 			ReceivingBlock = false
-			datatReceived()
+			DatatReceived()
 		case "SendBlock":
 			treatBlocReceived(jsonData)
+		case "SendConfig":
+			var NewConfig map[string]interface{} = jsonData["Data"].(map[string]interface{})
+			configuration.Global.RandomGeneration = NewConfig["RandomGeneration"].(bool)
+			configuration.Global.RandomTileX = int(NewConfig["RandomTileX"].(float64))
+			configuration.Global.RandomTileY = int(NewConfig["RandomTileY"].(float64))
+			configuration.Global.Portal = NewConfig["Portal"].(bool)
+			configuration.Global.SingleUsagePortal = NewConfig["SingleUsagePortal"].(bool)
+			configuration.Global.CameraBlockEdge = NewConfig["CameraBlockEdge"].(bool)
+			configuration.Global.CameraFluide = NewConfig["CameraFluide"].(bool)
+			configuration.Global.GenerationInfinie = NewConfig["GenerationInfinie"].(bool)
+			configuration.Global.TerreRonde = NewConfig["TerreRonde"].(bool)
+			configuration.Global.MultiplayerColision = NewConfig["MultiplayerColision"].(bool)
+			DatatReceived()
 		case "DataReceived":
 			WaitingForResponse = false
 		}

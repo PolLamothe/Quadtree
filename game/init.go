@@ -12,8 +12,13 @@ import (
 // faire attention à l'ordre des initialisation car elles
 // pourraient dépendre les unes des autres.
 func (g *Game) Init() {
-	v, _ := strconv.Atoi(os.Args[1])
-	configuration.Global.MultiplayerKind = v
+	if len(os.Args) > 1 {
+		v, _ := strconv.Atoi(os.Args[1])
+		configuration.Global.MultiplayerKind = v
+	}
+	if configuration.Global.MultiplayerKind != 0 {
+		configuration.Global.FloorKind = 2
+	}
 	if configuration.Global.GenerationInfinie {
 		configuration.Global.FloorKind = 2
 	}
