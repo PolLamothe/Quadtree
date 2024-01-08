@@ -39,6 +39,8 @@ func handleClient(conn net.Conn) {
 	}
 	fmt.Println("connection validated with " + conn.RemoteAddr().String())
 	Conn = conn
+	go SendConfig()
+	waitForResponse()
 	go SendMap()
 	waitForResponse()
 	go SendPos(ServerPos["X"], ServerPos["Y"])

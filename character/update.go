@@ -82,6 +82,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				multiplayer.MultiplayerPortal = multiplayer.MultiplayerPortal[1:]
 			}
 			multiplayer.MultiplayerPortal = append(multiplayer.MultiplayerPortal, []int{c.X, c.Y})
+			multiplayer.KeyPressed = ""
 		}
 	} else {
 		c.animationFrameCount++
