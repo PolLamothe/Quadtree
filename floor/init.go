@@ -63,7 +63,7 @@ func (f *Floor) Init() {
 			f.QuadtreeContent = quadtree.MakeFromArray(f.FullContent, len(f.FullContent[0]), len(f.FullContent), 0, 0)
 		} else {
 			if configuration.Global.GenerationInfinie {
-				f.QuadtreeContent = quadtree.MakeFromArray([][]int{}, configuration.Global.NumTileX*4, configuration.Global.NumTileY*4, -configuration.Global.RandomTileX, -configuration.Global.RandomTileY)
+				f.QuadtreeContent = quadtree.MakeFromArray([][]int{}, configuration.Global.NumTileX*4, configuration.Global.NumTileY*4, -configuration.Global.NumTileX, -configuration.Global.NumTileY)
 			} else {
 				if configuration.Global.MultiplayerKind != 2 {
 					f.FullContent = readFloorFromFile(configuration.Global.FloorFile)

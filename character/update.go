@@ -29,7 +29,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.xInc = 1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("right")
 				}
 			}
@@ -41,7 +41,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.xInc = -1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("left")
 				}
 			}
@@ -53,7 +53,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.yInc = -1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("up")
 				}
 			}
@@ -65,7 +65,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.yInc = 1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("down")
 				}
 			}
@@ -74,7 +74,13 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				portal.PortalStore = portal.PortalStore[1:]
 			}
 			portal.PortalStore = append(portal.PortalStore, []int{c.X, c.Y})
-			if configuration.Global.MultiplayerKind != 0 {
+			if !multiplayer.RoutineFinished {
+				if len(multiplayer.MultiplayerPortal) == 2 {
+					multiplayer.MultiplayerPortal = multiplayer.MultiplayerPortal[1:]
+				}
+				multiplayer.MultiplayerPortal = append(multiplayer.MultiplayerPortal, []int{c.X, c.Y})
+			}
+			if configuration.Global.MultiplayerKind != 0 && multiplayer.RoutineFinished {
 				multiplayer.SendKeyPressed("tab")
 			}
 		} else if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber != configuration.Global.MultiplayerKind && multiplayer.KeyPressed == "tab" {
