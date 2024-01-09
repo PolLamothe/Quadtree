@@ -50,6 +50,7 @@ func SendPortal() {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 		MultiplayerPortal = [][]int{}
 	}
@@ -80,6 +81,7 @@ func SendConfig() {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 		fmt.Println("config sent succesfully")
 		return
@@ -98,6 +100,7 @@ func StartSendingBlock() {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }
@@ -212,6 +215,7 @@ func StopSendingBlock() {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }
@@ -237,6 +241,7 @@ func SendBlock() {
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
+					time.Sleep(100 * time.Millisecond)
 				}
 			}
 		} else {
@@ -269,6 +274,7 @@ func SendBlock() {
 					}
 					Conn.Write(data)
 					for WaitingForResponse {
+						time.Sleep(100 * time.Millisecond)
 					}
 					temp = []map[string]int{}
 				}
@@ -285,6 +291,7 @@ func SendBlock() {
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
+					time.Sleep(100 * time.Millisecond)
 				}
 			}
 			// Fermeture du fichier
@@ -293,8 +300,8 @@ func SendBlock() {
 				log.Fatal(err)
 			}
 		}
-		RoutineFinished = true
 		StopSendingBlock() //on prévient l'autre que l'on a fini d'envoyer les blocs
+		RoutineFinished = true
 	}
 }
 
@@ -326,6 +333,7 @@ func SendMap() {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }
@@ -361,6 +369,7 @@ func SendPos(x, y int) {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }
@@ -378,6 +387,7 @@ func SendKeyPressed(key string) {
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }
