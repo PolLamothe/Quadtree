@@ -25,6 +25,36 @@ var ReceivingBlock bool = false
 var RoutineFinished bool = false
 var SendingConfirmation bool = false
 
+func StoreInFile(x, y, value int) {
+	f, err := os.OpenFile("../multiplayer/BlockGeneratedServer", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+	data, _ := json.Marshal(map[string]int{"X": x, "Y": y, "Value": value})
+	if _, err := f.WriteString(string(data) + "\n"); err != nil {
+		log.Println(err)
+	}
+}
+
+func SendPortal() {
+	if Conn != nil {
+		JSONData := map[string]interface{}{
+			"API":  "SendPortal",
+			"Data": MultiplayerPortal,
+		}
+		data, _ := json.Marshal(JSONData)
+		WaitingForResponse = true
+		for SendingConfirmation {
+			time.Sleep(100 * time.Millisecond)
+		}
+		Conn.Write(data)
+		for WaitingForResponse {
+		}
+		MultiplayerPortal = [][]int{}
+	}
+}
+
 func SendConfig() {
 	if Conn != nil {
 		ConfigDATA := map[string]interface{}{
@@ -189,25 +219,81 @@ func StopSendingBlock() {
 func SendBlock() {
 	if Conn != nil {
 		StartSendingBlock()
-		for len(BlockToSend) > 0 { //tant qu'il reste des blocs a envoyer on va les envoyers par paquet de 10 (sinon il y'en a trop et la fonction unmarshall ne fonctionne pas)
-			var temp []map[string]int = []map[string]int{}
-			for x := 0; x < 10 && len(BlockToSend) > 0; x++ {
-				temp = append(temp, BlockToSend[0])
-				BlockToSend = BlockToSend[1:]
+		if RoutineFinished {
+			for len(BlockToSend) > 0 { //tant qu'il reste des blocs a envoyer on va les envoyers par paquet de 10 (sinon il y'en a trop et la fonction unmarshall ne fonctionne pas)
+				var temp []map[string]int = []map[string]int{}
+				for x := 0; x < 10 && len(BlockToSend) > 0; x++ {
+					temp = append(temp, BlockToSend[0])
+					BlockToSend = BlockToSend[1:]
+				}
+				JSONData := map[string]interface{}{
+					"API":  "SendBlock",
+					"Data": temp,
+				}
+				data, _ := json.Marshal(JSONData)
+				WaitingForResponse = true
+				for SendingConfirmation {
+					time.Sleep(100 * time.Millisecond)
+				}
+				Conn.Write(data)
+				for WaitingForResponse {
+				}
 			}
-			JSONData := map[string]interface{}{
-				"API":  "SendBlock",
-				"Data": temp,
+		} else {
+			//Ouverture du fichier
+			var filePath string = "../multiplayer/BlockGeneratedServer"
+			var myFile *os.File
+			var err error
+			myFile, err = os.Open(filePath)
+			//Préparation de la lecture
+			var scanner *bufio.Scanner
+			scanner = bufio.NewScanner(myFile)
+			// Lecture des lignes du fichier
+			var temp []map[string]int
+			for scanner.Scan() {
+				var data map[string]int = map[string]int{}
+				err := json.Unmarshal([]byte(scanner.Text()), &data)
+				if err != nil {
+					log.Fatal(err)
+				}
+				temp = append(temp, data)
+				if len(temp) == 10 {
+					JSONData := map[string]interface{}{
+						"API":  "SendBlock",
+						"Data": temp,
+					}
+					data, _ := json.Marshal(JSONData)
+					WaitingForResponse = true
+					for SendingConfirmation {
+						time.Sleep(100 * time.Millisecond)
+					}
+					Conn.Write(data)
+					for WaitingForResponse {
+					}
+					temp = []map[string]int{}
+				}
 			}
-			data, _ := json.Marshal(JSONData)
-			WaitingForResponse = true
-			for SendingConfirmation {
-				time.Sleep(100 * time.Millisecond)
+			if len(temp) > 0 {
+				JSONData := map[string]interface{}{
+					"API":  "SendBlock",
+					"Data": temp,
+				}
+				data, _ := json.Marshal(JSONData)
+				WaitingForResponse = true
+				for SendingConfirmation {
+					time.Sleep(100 * time.Millisecond)
+				}
+				Conn.Write(data)
+				for WaitingForResponse {
+				}
 			}
-			Conn.Write(data)
-			for WaitingForResponse {
+			// Fermeture du fichier
+			err = myFile.Close()
+			if err != nil {
+				log.Fatal(err)
 			}
 		}
+		RoutineFinished = true
 		StopSendingBlock() //on prévient l'autre que l'on a fini d'envoyer les blocs
 	}
 }
@@ -327,7 +413,6 @@ func DatatReceived() {
 		}
 		data, _ := json.Marshal(JSONData)
 		Conn.Write(data)
-		time.Sleep(100 * time.Millisecond)
 		SendingConfirmation = false
 	}
 }

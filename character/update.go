@@ -21,7 +21,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 		multiplayer.ClientPos = map[string]int{"X": c.X, "Y": c.Y}
 	}
 	if !c.moving && !c.PortalSecure {
-		if (ebiten.IsKeyPressed(ebiten.KeyRight) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "right" /*&& configuration.Global.MultiplayerKind != c.CharacterNumber*/) {
+		if (ebiten.IsKeyPressed(ebiten.KeyRight) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "right" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedRight
 			if !blocking[1] {
 				if configuration.Global.MultiplayerKind != c.CharacterNumber {
@@ -33,7 +33,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 					multiplayer.SendKeyPressed("right")
 				}
 			}
-		} else if (ebiten.IsKeyPressed(ebiten.KeyLeft) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "left" /*&& configuration.Global.MultiplayerKind != c.CharacterNumber*/) {
+		} else if (ebiten.IsKeyPressed(ebiten.KeyLeft) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "left" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
 			c.orientation = orientedLeft
 			if !blocking[3] {
 				if configuration.Global.MultiplayerKind != c.CharacterNumber {
@@ -74,6 +74,12 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				portal.PortalStore = portal.PortalStore[1:]
 			}
 			portal.PortalStore = append(portal.PortalStore, []int{c.X, c.Y})
+			if !multiplayer.RoutineFinished {
+				if len(multiplayer.MultiplayerPortal) == 2 {
+					multiplayer.MultiplayerPortal = multiplayer.MultiplayerPortal[1:]
+				}
+				multiplayer.MultiplayerPortal = append(multiplayer.MultiplayerPortal, []int{c.X, c.Y})
+			}
 			if configuration.Global.MultiplayerKind != 0 && multiplayer.RoutineFinished {
 				multiplayer.SendKeyPressed("tab")
 			}

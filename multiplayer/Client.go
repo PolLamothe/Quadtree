@@ -82,6 +82,20 @@ func InitAsClient() {
 			configuration.Global.GenerationInfinie = NewConfig["GenerationInfinie"].(bool)
 			configuration.Global.TerreRonde = NewConfig["TerreRonde"].(bool)
 			configuration.Global.MultiplayerColision = NewConfig["MultiplayerColision"].(bool)
+			DatatReceived()case "SendPortal":
+			Portal := jsonData["Data"].([]interface{})
+			var Portal2 [][]interface{}
+			for i := 0; i < len(Portal); i++ {
+				Portal2 = append(Portal2, Portal[i].([]interface{}))
+			}
+			var Portal3 [][]int
+			for i := 0; i < len(Portal2); i++ {
+				Portal3 = append(Portal3, []int{})
+				for x := 0; x < len(Portal2[i]); x++ {
+					Portal3[i] = append(Portal3[i], int(Portal2[i][x].(float64)))
+				}
+			}
+			MultiplayerPortal = Portal3
 			DatatReceived()
 		case "DataReceived":
 			WaitingForResponse = false

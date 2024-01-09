@@ -70,23 +70,25 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 			laNode.content = flootContent[laNode.TopLeftY][laNode.TopLeftX]
 		} else {
 			laNode.content = rand.Intn(5)
-			if configuration.Global.GenerationInfinie && configuration.Global.MultiplayerKind != 0 {
+			if configuration.Global.MultiplayerKind != 0 {
 				for i := 0; i < laNode.width; i++ {
 					for x := 0; x < laNode.height; x++ {
 						var state, value = multiplayer.IsThisBlockReceived(laNode.TopLeftX+i, laNode.TopLeftY+x)
 						if state {
 							laNode.content = value
 						} else {
-							laNode.content = rand.Intn(5)
-							multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
 							if multiplayer.RoutineFinished {
+								multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
 								multiplayer.SendBlock()
+							} else {
+								multiplayer.StoreInFile(laNode.TopLeftX+i, laNode.TopLeftY+x, laNode.content)
 							}
 						}
 					}
 				}
 			}
 		}
+		return laNode
 	} else if len(flootContent) > 0 {
 		var topLeftNode node = Recur("topLeft", flootContent, laNode, initTopLeftX, initTopLeftY)
 		laNode.topLeftNode = &topLeftNode
