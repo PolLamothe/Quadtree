@@ -53,20 +53,12 @@ func InitAsClient() {
 		case "SendMap":
 			Map = UpdateMap(jsonData["Data"])
 			DatatReceived()
-			fmt.Println("Map received")
 		case "SendPos":
 			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
 			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
-			MapReceived = true
 			DatatReceived()
 		case "SendKeyPressed":
 			KeyPressed = jsonData["Data"].(string)
-			DatatReceived()
-		case "StartSendingBlock":
-			ReceivingBlock = true
-			DatatReceived()
-		case "StopSendingBlock":
-			ReceivingBlock = false
 			DatatReceived()
 		case "SendBlock":
 			treatBlocReceived(jsonData)
@@ -97,6 +89,8 @@ func InitAsClient() {
 				}
 			}
 			MultiplayerPortal = Portal3
+			MapReceived = true
+			fmt.Println("initialisation done")
 			DatatReceived()
 		case "DataReceived":
 			WaitingForResponse = false

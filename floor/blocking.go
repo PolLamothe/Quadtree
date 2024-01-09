@@ -29,7 +29,7 @@ func (f Floor) Blocking(characterXPos, characterYPos, camXPos, camYPos int) (blo
 		}
 	} else {
 		var topLeftY, topLeftX int = characterYPos - configuration.Global.NumTileY/2, characterXPos - configuration.Global.NumTileX/2
-		var mapContent [][]int = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
+		var mapContent [][]int = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content, false)
 		relativeXPos = configuration.Global.ScreenCenterTileX
 		relativeYPos = configuration.Global.ScreenCenterTileY
 		if configuration.Global.CameraFluide {

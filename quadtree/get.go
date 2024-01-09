@@ -8,7 +8,7 @@ import (
 // un terrain dont la case le plus en haut à gauche a pour coordonnées
 // (TopLeftX, TopLeftY)) à partir du qadtree q.
 
-func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *node) int {
+func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *node, creation bool) int {
 	var currentWidth int = (*current).width
 	var currentHeight int = (*current).height
 	if !configuration.Global.GenerationInfinie && !configuration.Global.TerreRonde {
@@ -30,7 +30,7 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 			if indexX >= width {
 				indexX = (indexX) % width
 			}
-			return q.getNumberFromQuad(indexX, indexY, height, width, current)
+			return q.getNumberFromQuad(indexX, indexY, height, width, current, creation)
 		}
 	}
 	if (*current).content != -1 {
@@ -57,57 +57,87 @@ func (q Quadtree) getNumberFromQuad(indexX, indexY, height, width int, current *
 	var suivant *node
 	var suivant1 node
 	if xChoice == 1 && yChoice == 1 {
-		if configuration.Global.GenerationInfinie && (*current).topLeftNode == nil {
+		if configuration.Global.GenerationInfinie && (*current).topLeftNode == nil && creation {
 			suivant1 = Recur("topLeft", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
 			(*current).topLeftNode = &suivant1
 			suivant = &suivant1
-		} else {
+		} else if creation {
 			suivant = (*current).topLeftNode
+		} else {
+			if (*current).topLeftNode != nil {
+				suivant = (*current).topLeftNode
+			} else {
+				return -2
+			}
 		}
 	} else if xChoice == 2 && yChoice == 1 {
-		if configuration.Global.GenerationInfinie && (*current).topRightNode == nil {
+		if configuration.Global.GenerationInfinie && (*current).topRightNode == nil && creation {
 			suivant1 = Recur("topRight", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
 			(*current).topRightNode = &suivant1
 			suivant = &suivant1
-		} else {
+		} else if creation {
 			suivant = (*current).topRightNode
+		} else {
+			if (*current).topRightNode != nil {
+				suivant = (*current).topRightNode
+			} else {
+				return -2
+			}
 		}
 	} else if xChoice == 1 && yChoice == 2 {
-		if configuration.Global.GenerationInfinie && (*current).bottomLeftNode == nil {
+		if configuration.Global.GenerationInfinie && (*current).bottomLeftNode == nil && creation {
 			suivant1 = Recur("bottomLeft", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
 			(*current).bottomLeftNode = &suivant1
 			suivant = &suivant1
-		} else {
+		} else if creation {
 			suivant = (*current).bottomLeftNode
+		} else {
+			if (*current).bottomLeftNode != nil {
+				suivant = (*current).bottomLeftNode
+			} else {
+				return -2
+			}
 		}
 	} else if xChoice == 2 && yChoice == 2 {
-		if configuration.Global.GenerationInfinie && (*current).bottomRightNode == nil {
+		if configuration.Global.GenerationInfinie && (*current).bottomRightNode == nil && creation {
 			suivant1 = Recur("bottomRight", [][]int{}, *current, (*current).TopLeftX, (*current).TopLeftY)
 			(*current).bottomRightNode = &suivant1
 			suivant = &suivant1
-		} else {
+		} else if creation {
 			suivant = (*current).bottomRightNode
+		} else {
+			if (*current).bottomRightNode != nil {
+				suivant = (*current).bottomRightNode
+			} else {
+				return -2
+			}
 		}
 	} else {
 		return -1
 	}
-	return q.getNumberFromQuad(indexX, indexY, height, width, suivant)
+	return q.getNumberFromQuad(indexX, indexY, height, width, suivant, creation)
 }
 
-func (q Quadtree) GetContent(topLeftX, topLeftY int, contentHolder [][]int) [][]int {
+func (q Quadtree) GetContent(topLeftX, topLeftY int, contentHolder [][]int, creation bool) [][]int {
 	contentHolder = [][]int{}
 	var lenY, lenX int = configuration.Global.NumTileY, configuration.Global.NumTileX
 	if configuration.Global.CameraFluide {
 		lenY += 2
 		lenX += 2
+		topLeftY -= 1
+		topLeftX -= 1
 	}
 	for i := 0; i < lenY; i++ {
 		contentHolder = append(contentHolder, []int{})
 		for x := 0; x < lenX; x++ {
-			if configuration.Global.CameraFluide {
-				contentHolder[i] = append(contentHolder[i], q.getNumberFromQuad(topLeftX+x-1, topLeftY+i-1, q.Height, q.Width, q.Root))
+			if !creation {
+				if q.getNumberFromQuad(topLeftX+x, topLeftY+i-1, q.Height, q.Width, q.Root, creation) != -2 {
+					contentHolder[i] = append(contentHolder[i], q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.Height, q.Width, q.Root, creation))
+				} else {
+					contentHolder[i] = append(contentHolder[i], 0)
+				}
 			} else {
-				contentHolder[i] = append(contentHolder[i], q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.Height, q.Width, q.Root))
+				contentHolder[i] = append(contentHolder[i], q.getNumberFromQuad(topLeftX+x, topLeftY+i, q.Height, q.Width, q.Root, creation))
 			}
 		}
 	}

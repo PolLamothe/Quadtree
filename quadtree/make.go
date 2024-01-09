@@ -73,7 +73,7 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 			if configuration.Global.MultiplayerKind != 0 {
 				for i := 0; i < laNode.width; i++ {
 					for x := 0; x < laNode.height; x++ {
-						var state, value = multiplayer.IsThisBlockReceived(laNode.TopLeftX+i, laNode.TopLeftY+x)
+						var state, value = multiplayer.IsThisBlockReceived(laNode.TopLeftX+i, laNode.TopLeftY+x, true)
 						if state {
 							laNode.content = value
 						} else {

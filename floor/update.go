@@ -150,5 +150,5 @@ func (f *Floor) updateQuadtreeFloor(camXPos, camYPos, XShift, YShift int) {
 			}
 		}
 	}
-	f.Content = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
+	f.Content = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content, true)
 }

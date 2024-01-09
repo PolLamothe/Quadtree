@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 	"os"
@@ -52,6 +53,7 @@ func (g *Game) Init() {
 				break
 			}
 		}
+		fmt.Println("Game initialized")
 	}
 	if configuration.Global.MultiplayerKind == 1 {
 		path, err := filepath.Abs("../multiplayer/BlockGeneratedServer")

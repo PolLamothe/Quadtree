@@ -39,6 +39,9 @@ func StoreInFile(x, y, value int) {
 
 func SendPortal() {
 	if Conn != nil {
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("trying to send portal")
+		}
 		JSONData := map[string]interface{}{
 			"API":  "SendPortal",
 			"Data": MultiplayerPortal,
@@ -53,11 +56,17 @@ func SendPortal() {
 			time.Sleep(100 * time.Millisecond)
 		}
 		MultiplayerPortal = [][]int{}
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("portal sent succesfully")
+		}
 	}
 }
 
 func SendConfig() {
 	if Conn != nil {
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("trying to send config")
+		}
 		ConfigDATA := map[string]interface{}{
 			"RandomGeneration":    configuration.Global.RandomGeneration,
 			"RandomTileX":         configuration.Global.RandomTileX,
@@ -83,29 +92,14 @@ func SendConfig() {
 		for WaitingForResponse {
 			time.Sleep(100 * time.Millisecond)
 		}
-		fmt.Println("config sent succesfully")
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("config sent succesfully")
+		}
 		return
 	}
 }
 
-func StartSendingBlock() {
-	if Conn != nil {
-		JSONData := map[string]interface{}{
-			"API": "StartSendingBlock",
-		}
-		data, _ := json.Marshal(JSONData)
-		WaitingForResponse = true
-		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
-		}
-		Conn.Write(data)
-		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
-		}
-	}
-}
-
-func IsThisBlockReceived(x, y int) (bool, int) {
+func IsThisBlockReceived(x, y int, deletation bool) (bool, int) {
 	//Ouverture du fichier
 	var path string
 	if configuration.Global.MultiplayerKind == 1 {
@@ -152,7 +146,7 @@ func IsThisBlockReceived(x, y int) (bool, int) {
 			}
 		}
 	}
-	if found {
+	if found && deletation {
 		os.RemoveAll(path)
 		var newPath string
 		if configuration.Global.MultiplayerKind == 1 {
@@ -203,26 +197,11 @@ func treatBlocReceived(jsonData map[string]interface{}) {
 	DatatReceived()
 }
 
-func StopSendingBlock() {
-	if Conn != nil {
-		JSONData := map[string]interface{}{
-			"API": "StopSendingBlock",
-		}
-		data, _ := json.Marshal(JSONData)
-		WaitingForResponse = true
-		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
-		}
-		Conn.Write(data)
-		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
-		}
-	}
-}
-
 func SendBlock() {
 	if Conn != nil {
-		StartSendingBlock()
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("trying to send block")
+		}
 		if RoutineFinished {
 			for len(BlockToSend) > 0 { //tant qu'il reste des blocs a envoyer on va les envoyers par paquet de 10 (sinon il y'en a trop et la fonction unmarshall ne fonctionne pas)
 				var temp []map[string]int = []map[string]int{}
@@ -236,12 +215,14 @@ func SendBlock() {
 				}
 				data, _ := json.Marshal(JSONData)
 				WaitingForResponse = true
+				if !RoutineFinished {
+					go waitForResponse()
+				}
 				for SendingConfirmation {
 					time.Sleep(100 * time.Millisecond)
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
-					time.Sleep(100 * time.Millisecond)
 				}
 			}
 		} else {
@@ -269,12 +250,14 @@ func SendBlock() {
 					}
 					data, _ := json.Marshal(JSONData)
 					WaitingForResponse = true
+					if !RoutineFinished {
+						go waitForResponse()
+					}
 					for SendingConfirmation {
 						time.Sleep(100 * time.Millisecond)
 					}
 					Conn.Write(data)
 					for WaitingForResponse {
-						time.Sleep(100 * time.Millisecond)
 					}
 					temp = []map[string]int{}
 				}
@@ -286,12 +269,14 @@ func SendBlock() {
 				}
 				data, _ := json.Marshal(JSONData)
 				WaitingForResponse = true
+				if !RoutineFinished {
+					go waitForResponse()
+				}
 				for SendingConfirmation {
 					time.Sleep(100 * time.Millisecond)
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
-					time.Sleep(100 * time.Millisecond)
 				}
 			}
 			// Fermeture du fichier
@@ -300,8 +285,9 @@ func SendBlock() {
 				log.Fatal(err)
 			}
 		}
-		StopSendingBlock() //on prévient l'autre que l'on a fini d'envoyer les blocs
-		RoutineFinished = true
+	}
+	if configuration.Global.DebugMultiplayer {
+		fmt.Println("All block sent succesfully")
 	}
 }
 
@@ -322,6 +308,9 @@ func IsThereAPlayer(x, y, mapWidth, mapHeight int) bool {
 
 func SendMap() {
 	if Conn != nil {
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("trying to send map")
+		}
 		JSONData := map[string]interface{}{
 			"API":  "SendMap",
 			"Data": Map,
@@ -334,6 +323,9 @@ func SendMap() {
 		Conn.Write(data)
 		for WaitingForResponse {
 			time.Sleep(100 * time.Millisecond)
+		}
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("map sent succesfully")
 		}
 	}
 }
@@ -358,6 +350,9 @@ func convertInterFaceArrayToArrayArrayInt(array []interface{}) [][]int {
 
 func SendPos(x, y int) {
 	if Conn != nil {
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("trying to send pos")
+		}
 		JSONData := map[string]interface{}{
 			"API":  "SendPos",
 			"Data": map[string]int{"X": x, "Y": y},
@@ -371,11 +366,17 @@ func SendPos(x, y int) {
 		for WaitingForResponse {
 			time.Sleep(100 * time.Millisecond)
 		}
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("pos sent succesfully")
+		}
 	}
 }
 
 func SendKeyPressed(key string) {
 	if Conn != nil {
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("trying to send key")
+		}
 		JSONData := map[string]interface{}{
 			"API":  "SendKeyPressed",
 			"Data": key,
@@ -388,6 +389,9 @@ func SendKeyPressed(key string) {
 		Conn.Write(data)
 		for WaitingForResponse {
 			time.Sleep(100 * time.Millisecond)
+		}
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("key sent succesfully")
 		}
 	}
 }
@@ -408,6 +412,7 @@ func waitForResponse() {
 	jsonData := map[string]interface{}{}
 	err = json.Unmarshal(data, &jsonData)
 	if err != nil {
+		fmt.Println(string(data))
 		fmt.Println("Error3:", err)
 		return
 	}
@@ -424,5 +429,8 @@ func DatatReceived() {
 		data, _ := json.Marshal(JSONData)
 		Conn.Write(data)
 		SendingConfirmation = false
+		if configuration.Global.DebugMultiplayer {
+			fmt.Println("confirmation sent succesfully")
+		}
 	}
 }
