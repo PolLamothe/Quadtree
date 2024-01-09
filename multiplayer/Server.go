@@ -47,6 +47,7 @@ func handleClient(conn net.Conn) {
 	waitForResponse()
 	go SendBlock()
 	waitForResponse()
+	RoutineFinished = true
 	buffer := make([]byte, 1024)
 	for {
 		// Handle client connection in a goroutine

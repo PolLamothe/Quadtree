@@ -79,7 +79,9 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 						} else {
 							laNode.content = rand.Intn(5)
 							multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
-							multiplayer.SendBlock()
+							if multiplayer.RoutineFinished {
+								multiplayer.SendBlock()
+							}
 						}
 					}
 				}

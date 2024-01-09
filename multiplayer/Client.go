@@ -29,6 +29,7 @@ func InitAsClient() {
 	Conn = conn
 	fmt.Println("connection validated with " + conn.RemoteAddr().String())
 	buffer := make([]byte, 1024)
+	RoutineFinished = true
 	for {
 		// Handle client connection in a goroutine
 		bytesRead, err := conn.Read(buffer)
@@ -85,7 +86,6 @@ func InitAsClient() {
 		case "DataReceived":
 			WaitingForResponse = false
 		}
-
 		buffer = make([]byte, 1024)
 	}
 }

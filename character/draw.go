@@ -129,12 +129,15 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 			YDiff = 1 - YDiff
 		}
 		if !configuration.Global.CameraFluide {
-			xPos = (xTileForDisplay) * configuration.Global.TileSize
-			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2
+			xPos = (xTileForDisplay)*configuration.Global.TileSize + c.XShift
+			yPos = (yTileForDisplay)*configuration.Global.TileSize - configuration.Global.TileSize/2 + 2 + c.YShift
 		} else {
 			if c.XShift < 0 {
 				xTileForDisplay += 2
 				if configuration.Global.CameraBlockEdge && ((c.X+c.xInc != int(camX) || c.orientation != orientedLeft || c.X == camX2+1) || MapWidth < configuration.Global.NumTileX) {
+					xTileForDisplay--
+				}
+				if XShift < 0 && c.XShift < 0 {
 					xTileForDisplay--
 				}
 				if !configuration.Global.CameraBlockEdge {
@@ -144,6 +147,9 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 			if c.YShift < 0 {
 				yTileForDisplay += 2
 				if configuration.Global.CameraBlockEdge && ((c.Y+c.yInc != int(camY) || c.orientation != orientedUp || c.Y == MapHeight-2 || c.Y == camY2+1) || MapHeight < configuration.Global.NumTileY) {
+					yTileForDisplay--
+				}
+				if YShift < 0 && c.YShift < 0 {
 					yTileForDisplay--
 				}
 				if !configuration.Global.CameraBlockEdge {

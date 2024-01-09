@@ -21,7 +21,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 		multiplayer.ClientPos = map[string]int{"X": c.X, "Y": c.Y}
 	}
 	if !c.moving && !c.PortalSecure {
-		if (ebiten.IsKeyPressed(ebiten.KeyRight) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "right" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
+		if (ebiten.IsKeyPressed(ebiten.KeyRight) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "right" /*&& configuration.Global.MultiplayerKind != c.CharacterNumber*/) {
 			c.orientation = orientedRight
 			if !blocking[1] {
 				if configuration.Global.MultiplayerKind != c.CharacterNumber {
@@ -29,11 +29,11 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.xInc = 1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("right")
 				}
 			}
-		} else if (ebiten.IsKeyPressed(ebiten.KeyLeft) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "left" && configuration.Global.MultiplayerKind != c.CharacterNumber) {
+		} else if (ebiten.IsKeyPressed(ebiten.KeyLeft) && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber)) || (multiplayer.KeyPressed == "left" /*&& configuration.Global.MultiplayerKind != c.CharacterNumber*/) {
 			c.orientation = orientedLeft
 			if !blocking[3] {
 				if configuration.Global.MultiplayerKind != c.CharacterNumber {
@@ -41,7 +41,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.xInc = -1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("left")
 				}
 			}
@@ -53,7 +53,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.yInc = -1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("up")
 				}
 			}
@@ -65,7 +65,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				}
 				c.yInc = 1
 				c.moving = true
-				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind {
+				if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber == configuration.Global.MultiplayerKind && multiplayer.RoutineFinished {
 					multiplayer.SendKeyPressed("down")
 				}
 			}
@@ -74,7 +74,7 @@ func (c *Character) Update(blocking [4]bool, f *floor.Floor) {
 				portal.PortalStore = portal.PortalStore[1:]
 			}
 			portal.PortalStore = append(portal.PortalStore, []int{c.X, c.Y})
-			if configuration.Global.MultiplayerKind != 0 {
+			if configuration.Global.MultiplayerKind != 0 && multiplayer.RoutineFinished {
 				multiplayer.SendKeyPressed("tab")
 			}
 		} else if configuration.Global.MultiplayerKind != 0 && c.CharacterNumber != configuration.Global.MultiplayerKind && multiplayer.KeyPressed == "tab" {
