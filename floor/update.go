@@ -152,5 +152,7 @@ func (f *Floor) updateQuadtreeFloor(camXPos, camYPos, XShift, YShift int) {
 		}
 	}
 	f.Content = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content, true)
-	multiplayer.SendBlock()
+	if multiplayer.RoutineFinished && len(multiplayer.BlockToSend) > 0 {
+		multiplayer.SendBlock()
+	}
 }

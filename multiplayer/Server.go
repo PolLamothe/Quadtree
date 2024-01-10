@@ -39,15 +39,11 @@ func handleClient(conn net.Conn) {
 	}
 	fmt.Println("connection validated with " + conn.RemoteAddr().String())
 	Conn = conn
-	go SendConfig()
-	waitForResponse()
-	go SendMap()
-	waitForResponse()
-	go SendPos(ServerPos["X"], ServerPos["Y"])
-	waitForResponse()
+	SendConfig()
+	SendMap()
+	SendPos(ServerPos["X"], ServerPos["Y"])
 	SendBlock()
-	go SendPortal()
-	waitForResponse()
+	SendPortal()
 	fmt.Println("all data sent")
 	RoutineFinished = true
 	buffer := make([]byte, 1024)
