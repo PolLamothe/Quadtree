@@ -2,6 +2,7 @@ package floor
 
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
+	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
 )
 
 // Update se charge de stocker dans la structure interne (un tableau)
@@ -150,5 +151,8 @@ func (f *Floor) updateQuadtreeFloor(camXPos, camYPos, XShift, YShift int) {
 			}
 		}
 	}
-	f.Content = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content)
+	f.Content = f.QuadtreeContent.GetContent(topLeftX, topLeftY, f.Content, true)
+	if multiplayer.RoutineFinished && len(multiplayer.BlockToSend) > 0 {
+		multiplayer.SendBlock()
+	}
 }

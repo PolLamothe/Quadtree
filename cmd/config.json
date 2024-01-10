@@ -21,5 +21,6 @@
     "MultiplayerKind":0,
     "MultiplayerIP" : "127.0.0.1",
     "ServerPort" : "3333",
-    "MultiplayerColision" : true
+    "MultiplayerColision" : false,
+    "DebugMultiplayer" : true
 }

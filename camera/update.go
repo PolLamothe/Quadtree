@@ -67,13 +67,12 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 	} else if YShift < 0 {
 		YDir = -1
 	}
-	if configuration.Global.NumTileX%2 == 0 && XDir == 1 {
+	if XDir == 1 {
 		XDir--
 	}
-	if configuration.Global.NumTileY%2 == 0 && YDir == 1 {
+	if YDir == 1 {
 		YDir--
 	}
-
 	if configuration.Global.CameraBlockEdge && MapWidth >= configuration.Global.NumTileX && MapHeight >= configuration.Global.NumTileY && !configuration.Global.GenerationInfinie {
 		if float64(characterPosX-configuration.Global.NumTileX/2)+(float64(XShift)/float64(configuration.Global.TileSize)) >= 0 && float64(characterPosX+camXExtern)+(float64(XShift)/float64(configuration.Global.TileSize)) < float64(MapWidth) {
 			if XShift == 0 {
