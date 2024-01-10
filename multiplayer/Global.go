@@ -49,11 +49,11 @@ func SendPortal() {
 		data, _ := json.Marshal(JSONData)
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		MultiplayerPortal = [][]int{}
 		if configuration.Global.DebugMultiplayer {
@@ -86,11 +86,11 @@ func SendConfig() {
 		data, _ := json.Marshal(JSONData)
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("config sent succesfully")
@@ -219,7 +219,7 @@ func SendBlock() {
 					go waitForResponse()
 				}
 				for SendingConfirmation {
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(50 * time.Millisecond)
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
@@ -273,7 +273,7 @@ func SendBlock() {
 					go waitForResponse()
 				}
 				for SendingConfirmation {
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(50 * time.Millisecond)
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
@@ -318,11 +318,11 @@ func SendMap() {
 		data, _ := json.Marshal(JSONData)
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("map sent succesfully")
@@ -360,11 +360,11 @@ func SendPos(x, y int) {
 		data, _ := json.Marshal(JSONData)
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("pos sent succesfully")
@@ -384,11 +384,11 @@ func SendKeyPressed(key string) {
 		data, _ := json.Marshal(JSONData)
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("key sent succesfully")
