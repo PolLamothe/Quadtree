@@ -30,6 +30,12 @@ func (g *Game) Init() {
 		configuration.Global.CameraBlockEdge = false
 		configuration.Global.TerreRonde = false
 	}
+	if configuration.Global.CameraMode == 2 {
+		configuration.Global.CameraFluide = false
+	}
+	if configuration.Global.TerreRonde {
+		configuration.Global.CameraMode = 1
+	}
 	if configuration.Global.MultiplayerKind != 2 {
 		g.floor.Init()
 		g.Character.CharacterNumber = 1
