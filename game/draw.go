@@ -1,6 +1,5 @@
 package game
 
-import "C"
 import (
 	"fmt"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/multiplayer"
