@@ -6,6 +6,7 @@ import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"net"
 	"strings"
+	"time"
 )
 
 func ConnectAsServer() {
@@ -68,6 +69,9 @@ func handleClient(conn net.Conn) {
 		}
 		for i := 1; i < len(dataArray); i++ {
 			dataArray[i] = "{" + dataArray[i]
+			if configuration.Global.DebugMultiplayer {
+				fmt.Println("desynchronised")
+			}
 		}
 		for i := 0; i < len(dataArray); i++ {
 			err = json.Unmarshal([]byte(dataArray[i]), &jsonData)
@@ -80,6 +84,7 @@ func handleClient(conn net.Conn) {
 			case "SendKeyPressed":
 				KeyPressed = jsonData["Data"].(string)
 				DatatReceived()
+				time.Sleep(250 * time.Millisecond)
 			case "SendBlock":
 				treatBlocReceived(jsonData)
 			case "DataReceived":

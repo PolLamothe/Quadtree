@@ -140,7 +140,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 				if XShift < 0 && c.XShift < 0 {
 					xTileForDisplay--
 				}
-				if !configuration.Global.CameraBlockEdge && (!configuration.Global.TerreRonde || c.CharacterNumber == 2) {
+				if !configuration.Global.CameraBlockEdge {
 					xTileForDisplay--
 				}
 			}
@@ -152,7 +152,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 				if YShift < 0 && c.YShift < 0 {
 					yTileForDisplay--
 				}
-				if !configuration.Global.CameraBlockEdge && (!configuration.Global.TerreRonde || c.CharacterNumber == 2) {
+				if !configuration.Global.CameraBlockEdge {
 					yTileForDisplay--
 				}
 			}

@@ -360,7 +360,6 @@ func SendPos(x, y int) {
 		for SendingConfirmation {
 		}
 		Conn.Write(data)
-		Conn.Write(data)
 		for WaitingForResponse {
 		}
 		if configuration.Global.DebugMultiplayer {
