@@ -79,7 +79,6 @@ func Recur(position string, flootContent [][]int, parent node, initTopLeftX, ini
 						} else {
 							if multiplayer.RoutineFinished {
 								multiplayer.BlockToSend = append(multiplayer.BlockToSend, map[string]int{"X": laNode.TopLeftX + i, "Y": laNode.TopLeftY + x, "Value": laNode.content})
-								multiplayer.SendBlock()
 							} else {
 								multiplayer.StoreInFile(laNode.TopLeftX+i, laNode.TopLeftY+x, laNode.content)
 							}

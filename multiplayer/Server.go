@@ -75,7 +75,6 @@ func handleClient(conn net.Conn) {
 			KeyPressed = jsonData["Data"].(string)
 			DatatReceived()
 		case "SendBlock":
-			fmt.Println("block received")
 			treatBlocReceived(jsonData)
 		case "DataReceived":
 			WaitingForResponse = false
