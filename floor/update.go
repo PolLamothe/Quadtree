@@ -47,14 +47,14 @@ func (f *Floor) updateFromFileFloor(camXPos, camYPos int) {
 	if !configuration.Global.TerreRonde {
 		var result [][]int
 		var lenY, lenX int = configuration.Global.NumTileY, configuration.Global.NumTileX
-		if configuration.Global.CameraFluide {
+		if configuration.Global.CameraFluide { //si la caméra est fluide on devra afficher les blocs sur les cotés (a cause de la transition)
 			lenY += 2
 			lenX += 2
 		}
 		for i := 0; i < lenY; i++ {
 			result = append(result, []int{})
 			for x := 0; x < lenX; x++ {
-				var indexX, indexY int = camXPos - configuration.Global.NumTileX/2 + x, camYPos - configuration.Global.NumTileY/2 + i
+				var indexX, indexY int = camXPos - configuration.Global.NumTileX/2 + x, camYPos - configuration.Global.NumTileY/2 + i //on transforme la position relative en position absolue
 				if configuration.Global.CameraFluide {
 					indexX -= 1
 					indexY -= 1

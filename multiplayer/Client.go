@@ -7,6 +7,7 @@ import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"net"
 	"os"
+	"strings"
 )
 
 func InitAsClient() {
@@ -43,57 +44,68 @@ func InitAsClient() {
 		}
 		data := buffer[:bytesRead]
 		jsonData := map[string]interface{}{}
-		err = json.Unmarshal(data, &jsonData)
-		if err != nil {
-			fmt.Println("Error3:", err)
-			fmt.Println(string(data))
-			return
+		var dataString string = string(data)
+		var dataArray []string = strings.SplitAfter(dataString, "}{")
+		if len(dataArray) > 1 {
+			dataArray[0] = dataArray[0][:len(dataArray[0])-1]
 		}
-		switch jsonData["API"] {
-		case "SendMap":
-			Map = UpdateMap(jsonData["Data"])
-			DatatReceived()
-		case "SendPos":
-			ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
-			ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
-			DatatReceived()
-		case "SendKeyPressed":
-			KeyPressed = jsonData["Data"].(string)
-			DatatReceived()
-		case "SendBlock":
-			treatBlocReceived(jsonData)
-		case "SendConfig":
-			var NewConfig map[string]interface{} = jsonData["Data"].(map[string]interface{})
-			configuration.Global.RandomGeneration = NewConfig["RandomGeneration"].(bool)
-			configuration.Global.RandomTileX = int(NewConfig["RandomTileX"].(float64))
-			configuration.Global.RandomTileY = int(NewConfig["RandomTileY"].(float64))
-			configuration.Global.Portal = NewConfig["Portal"].(bool)
-			configuration.Global.SingleUsagePortal = NewConfig["SingleUsagePortal"].(bool)
-			configuration.Global.CameraBlockEdge = NewConfig["CameraBlockEdge"].(bool)
-			configuration.Global.CameraFluide = NewConfig["CameraFluide"].(bool)
-			configuration.Global.GenerationInfinie = NewConfig["GenerationInfinie"].(bool)
-			configuration.Global.TerreRonde = NewConfig["TerreRonde"].(bool)
-			configuration.Global.MultiplayerColision = NewConfig["MultiplayerColision"].(bool)
-			DatatReceived()
-		case "SendPortal":
-			Portal := jsonData["Data"].([]interface{})
-			var Portal2 [][]interface{}
-			for i := 0; i < len(Portal); i++ {
-				Portal2 = append(Portal2, Portal[i].([]interface{}))
+		for i := 1; i < len(dataArray); i++ {
+			dataArray[i] = "{" + dataArray[i]
+		}
+		for i := 0; i < len(dataArray); i++ {
+			err = json.Unmarshal([]byte(dataArray[i]), &jsonData)
+			if err != nil {
+				fmt.Println("Error3:", err)
+				fmt.Println(string(data))
+				return
 			}
-			var Portal3 [][]int
-			for i := 0; i < len(Portal2); i++ {
-				Portal3 = append(Portal3, []int{})
-				for x := 0; x < len(Portal2[i]); x++ {
-					Portal3[i] = append(Portal3[i], int(Portal2[i][x].(float64)))
+			switch jsonData["API"] {
+			case "SendMap":
+				Map = UpdateMap(jsonData["Data"])
+				DatatReceived()
+			case "SendPos":
+				ServerPos["X"] = int((jsonData["Data"].(map[string]interface{}))["X"].(float64))
+				ServerPos["Y"] = int((jsonData["Data"].(map[string]interface{}))["Y"].(float64))
+				DatatReceived()
+			case "SendKeyPressed":
+				KeyPressed = jsonData["Data"].(string)
+				DatatReceived()
+			case "SendBlock":
+				treatBlocReceived(jsonData)
+			case "SendConfig":
+				var NewConfig map[string]interface{} = jsonData["Data"].(map[string]interface{})
+				configuration.Global.RandomGeneration = NewConfig["RandomGeneration"].(bool)
+				configuration.Global.RandomTileX = int(NewConfig["RandomTileX"].(float64))
+				configuration.Global.RandomTileY = int(NewConfig["RandomTileY"].(float64))
+				configuration.Global.Portal = NewConfig["Portal"].(bool)
+				configuration.Global.SingleUsagePortal = NewConfig["SingleUsagePortal"].(bool)
+				configuration.Global.CameraBlockEdge = NewConfig["CameraBlockEdge"].(bool)
+				configuration.Global.CameraFluide = NewConfig["CameraFluide"].(bool)
+				configuration.Global.GenerationInfinie = NewConfig["GenerationInfinie"].(bool)
+				configuration.Global.TerreRonde = NewConfig["TerreRonde"].(bool)
+				configuration.Global.MultiplayerColision = NewConfig["MultiplayerColision"].(bool)
+				fmt.Println("config received")
+				DatatReceived()
+			case "SendPortal":
+				Portal := jsonData["Data"].([]interface{})
+				var Portal2 [][]interface{}
+				for i := 0; i < len(Portal); i++ {
+					Portal2 = append(Portal2, Portal[i].([]interface{}))
 				}
+				var Portal3 [][]int
+				for i := 0; i < len(Portal2); i++ {
+					Portal3 = append(Portal3, []int{})
+					for x := 0; x < len(Portal2[i]); x++ {
+						Portal3[i] = append(Portal3[i], int(Portal2[i][x].(float64)))
+					}
+				}
+				MultiplayerPortal = Portal3
+				MapReceived = true
+				fmt.Println("initialisation done")
+				DatatReceived()
+			case "DataReceived":
+				WaitingForResponse = false
 			}
-			MultiplayerPortal = Portal3
-			MapReceived = true
-			fmt.Println("initialisation done")
-			DatatReceived()
-		case "DataReceived":
-			WaitingForResponse = false
 		}
 		buffer = make([]byte, 1024)
 	}

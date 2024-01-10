@@ -9,7 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"time"
+	"strings"
 )
 
 var Conn net.Conn = nil
@@ -52,12 +52,10 @@ func SendPortal() {
 		}
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
 		}
-		time.Sleep(50 * time.Millisecond)
 		MultiplayerPortal = [][]int{}
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("portal sent succesfully")
@@ -92,12 +90,10 @@ func SendConfig() {
 		}
 		WaitingForResponse = true
 		for SendingConfirmation {
-			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
 		}
-		time.Sleep(50 * time.Millisecond)
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("config sent succesfully")
 		}
@@ -222,12 +218,10 @@ func SendBlock() {
 				data, _ := json.Marshal(JSONData)
 				WaitingForResponse = true
 				for SendingConfirmation {
-					time.Sleep(50 * time.Millisecond)
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
 				}
-				time.Sleep(50 * time.Millisecond)
 			}
 		} else {
 			//Ouverture du fichier
@@ -256,12 +250,10 @@ func SendBlock() {
 					WaitingForResponse = true
 					go waitForResponse()
 					for SendingConfirmation {
-						time.Sleep(100 * time.Millisecond)
 					}
 					Conn.Write(data)
 					for WaitingForResponse {
 					}
-					time.Sleep(50 * time.Millisecond)
 					temp = []map[string]int{}
 				}
 			}
@@ -276,12 +268,10 @@ func SendBlock() {
 					go waitForResponse()
 				}
 				for SendingConfirmation {
-					time.Sleep(50 * time.Millisecond)
 				}
 				Conn.Write(data)
 				for WaitingForResponse {
 				}
-				time.Sleep(50 * time.Millisecond)
 			}
 			// Fermeture du fichier
 			err = myFile.Close()
@@ -325,12 +315,10 @@ func SendMap() {
 			go waitForResponse()
 		}
 		for SendingConfirmation {
-			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
 		}
-		time.Sleep(50 * time.Millisecond)
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("map sent succesfully")
 		}
@@ -370,12 +358,11 @@ func SendPos(x, y int) {
 			go waitForResponse()
 		}
 		for SendingConfirmation {
-			time.Sleep(50 * time.Millisecond)
 		}
+		Conn.Write(data)
 		Conn.Write(data)
 		for WaitingForResponse {
 		}
-		time.Sleep(50 * time.Millisecond)
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("pos sent succesfully")
 		}
@@ -397,12 +384,10 @@ func SendKeyPressed(key string) {
 			go waitForResponse()
 		}
 		for SendingConfirmation {
-			time.Sleep(50 * time.Millisecond)
 		}
 		Conn.Write(data)
 		for WaitingForResponse {
 		}
-		time.Sleep(50 * time.Millisecond)
 		if configuration.Global.DebugMultiplayer {
 			fmt.Println("key sent succesfully")
 		}
@@ -422,14 +407,18 @@ func waitForResponse() {
 		return
 	}
 	data := buffer[:bytesRead]
+	var dataString string = string(data)
+	var dataArray []string = strings.SplitAfter(dataString, "}{")
+	if len(dataArray) > 1 {
+		dataArray[0] = dataArray[0][:len(dataArray[0])-1]
+	}
 	jsonData := map[string]interface{}{}
-	err = json.Unmarshal(data, &jsonData)
+	err = json.Unmarshal([]byte(dataArray[0]), &jsonData)
 	if err != nil {
 		fmt.Println(string(data))
-		fmt.Println("Error3:", err)
+		fmt.Println("Error30:", err)
 		return
 	}
-	time.Sleep(50 * time.Millisecond)
 	WaitingForResponse = false
 	return
 }

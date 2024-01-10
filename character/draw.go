@@ -69,7 +69,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 	}
 	if configuration.Global.CameraFluide && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber) {
 		var camXExtern, camYExtern int = camX2, camY2
-		if configuration.Global.NumTileX%2 != 0 {
+		if configuration.Global.NumTileX%2 != 0 { //si jamais le nombre de tuile est pair, il y'aura plus de tuile d'un coté que de l'autre donc il faut rééquilibrer cela
 			camXExtern++
 		}
 		if configuration.Global.NumTileY%2 != 0 {
@@ -120,12 +120,12 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 			}
 		}
 	}
-	if configuration.Global.MultiplayerKind != 0 && configuration.Global.MultiplayerKind != c.CharacterNumber {
+	if configuration.Global.MultiplayerKind != 0 && configuration.Global.MultiplayerKind != c.CharacterNumber { // on dessine l'autre joueur
 		var XDiff, YDiff float64 = camX - float64(int(camX)), camY - float64(int(camY))
-		if xShift < 0 {
+		if xShift < 0 && !(c.XShift < 0 && XShift < 0) {
 			XDiff = 1 - XDiff
 		}
-		if yShift < 0 {
+		if yShift < 0 && !(c.YShift < 0 && YShift < 0) {
 			YDiff = 1 - YDiff
 		}
 		if !configuration.Global.CameraFluide {
@@ -140,7 +140,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 				if XShift < 0 && c.XShift < 0 {
 					xTileForDisplay--
 				}
-				if !configuration.Global.CameraBlockEdge {
+				if !configuration.Global.CameraBlockEdge && (!configuration.Global.TerreRonde || c.CharacterNumber == 2) {
 					xTileForDisplay--
 				}
 			}
@@ -152,7 +152,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 				if YShift < 0 && c.YShift < 0 {
 					yTileForDisplay--
 				}
-				if !configuration.Global.CameraBlockEdge {
+				if !configuration.Global.CameraBlockEdge && (!configuration.Global.TerreRonde || c.CharacterNumber == 2) {
 					yTileForDisplay--
 				}
 			}

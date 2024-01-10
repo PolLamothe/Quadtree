@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"net"
+	"strings"
 )
 
 func ConnectAsServer() {
@@ -60,20 +61,30 @@ func handleClient(conn net.Conn) {
 		}
 		data := buffer[:bytesRead]
 		jsonData := map[string]interface{}{}
-		err = json.Unmarshal(data, &jsonData)
-		if err != nil {
-			fmt.Println(string(data))
-			fmt.Println("Error3:", err)
-			return
+		var dataString string = string(data)
+		var dataArray []string = strings.SplitAfter(dataString, "}{")
+		if len(dataArray) > 1 {
+			dataArray[0] = dataArray[0][:len(dataArray[0])-1]
 		}
-		switch jsonData["API"] {
-		case "SendKeyPressed":
-			KeyPressed = jsonData["Data"].(string)
-			DatatReceived()
-		case "SendBlock":
-			treatBlocReceived(jsonData)
-		case "DataReceived":
-			WaitingForResponse = false
+		for i := 1; i < len(dataArray); i++ {
+			dataArray[i] = "{" + dataArray[i]
+		}
+		for i := 0; i < len(dataArray); i++ {
+			err = json.Unmarshal([]byte(dataArray[i]), &jsonData)
+			if err != nil {
+				fmt.Println(dataArray)
+				fmt.Println("Error31:", err)
+				return
+			}
+			switch jsonData["API"] {
+			case "SendKeyPressed":
+				KeyPressed = jsonData["Data"].(string)
+				DatatReceived()
+			case "SendBlock":
+				treatBlocReceived(jsonData)
+			case "DataReceived":
+				WaitingForResponse = false
+			}
 		}
 		buffer = make([]byte, 1024)
 	}

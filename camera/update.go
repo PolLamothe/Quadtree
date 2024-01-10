@@ -46,6 +46,8 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 			if characterPosX+camXExtern >= MapWidth {
 				c.X = float64(MapWidth-camXExtern) - 1
 			}
+		} else {
+			configuration.Global.CameraBlockEdge = false
 		}
 		if MapHeight >= configuration.Global.NumTileY {
 			if characterPosY-configuration.Global.NumTileY/2 < 0 {
@@ -54,6 +56,8 @@ func (c *Camera) updateFollowCharacter(characterPosX, characterPosY int, f *floo
 			if characterPosY+camYExtern >= MapHeight {
 				c.Y = float64(MapHeight-camYExtern) - 1
 			}
+		} else {
+			configuration.Global.CameraBlockEdge = false
 		}
 	}
 	var XDir, YDir int = 0, 0
