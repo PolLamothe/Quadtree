@@ -47,8 +47,7 @@ en byte et l'envoyer.
 donc pas sous forme de requete mais j'ai codé un systeme pour utiliser ce canal similairement a des requêtes**
 
 Cela peut donc poser un problème si l'un des joueurs envoie plusieurs données trop rapidement et que l'autre joueur n'a
-pas eu le temp de traiter la première, il recevra deux "requête en même temps" et ne pourra pas les traiters car une fois
-les bytes reçus convertis en string, il ne pourrons pas être utiliser par la fonction *json.Unmarshall*.
+pas eu le temp de traiter la première, cela pourrait donc causer une désynchronisation des deux joueurs.
 
 Solution :
 

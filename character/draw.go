@@ -69,7 +69,7 @@ func (c *Character) Draw(screen *ebiten.Image, MapWidth, MapHeight int, camX, ca
 	}
 	if configuration.Global.CameraFluide && (configuration.Global.MultiplayerKind == 0 || configuration.Global.MultiplayerKind == c.CharacterNumber) {
 		var camXExtern, camYExtern int = camX2, camY2
-		if configuration.Global.NumTileX%2 != 0 {
+		if configuration.Global.NumTileX%2 != 0 { //si jamais le nombre de tuile est pair, il y'aura plus de tuile d'un coté que de l'autre donc il faut rééquilibrer cela
 			camXExtern++
 		}
 		if configuration.Global.NumTileY%2 != 0 {
