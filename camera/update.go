@@ -1,6 +1,5 @@
 package camera
 
-import "C"
 import (
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/configuration"
 	"gitlab.univ-nantes.fr/jezequel-l/quadtree/floor"
